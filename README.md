@@ -63,9 +63,9 @@ JavaScriptを実行可能な実行環境（Antigravityの browser_subagent 等�
     "traffic": {
       "passengers": { "high": 1, "middle": 2, "basic": 3, "low": 4 },
       "freight_lots": {
-        "major": 1, "major_tons": 10,
-        "minor": 2, "minor_tons": 10,
-        "incidental": 0, "incidental_tons": 0
+        "major": 1,
+        "minor": 2,
+        "incidental": 0
       },
       "has_mail": true,
       "mail_containers": 1,
@@ -210,9 +210,9 @@ When the page is loaded in a browser, trade calculation results are embedded in 
     "traffic": {
       "passengers": { "high": 1, "middle": 2, "basic": 3, "low": 4 },
       "freight_lots": {
-        "major": 1, "major_tons": 10,
-        "minor": 2, "minor_tons": 10,
-        "incidental": 0, "incidental_tons": 0
+        "major": 1,
+        "minor": 2,
+        "incidental": 0
       },
       "has_mail": true,
       "mail_containers": 1,

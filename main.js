@@ -239,9 +239,9 @@ function renderResults(data) {
             </div>
             <div style="display: flex; gap: 0.5rem; align-items: center;">
                 <strong>${t.freightLots}</strong> 
-                <span class="code-badge" title="10-60 tons per lot">${t.freightMajor} ${traffic.freight_lots.major} (${traffic.freight_lots.major_tons}t)</span>
-                <span class="code-badge" title="5-30 tons per lot">${t.freightMinor} ${traffic.freight_lots.minor} (${traffic.freight_lots.minor_tons}t)</span>
-                <span class="code-badge" title="1-6 tons per lot">${t.freightIncidental} ${traffic.freight_lots.incidental} (${traffic.freight_lots.incidental_tons}t)</span>
+                <span class="code-badge" title="Major Cargo (1D x 10 tons per lot)">${t.freightMajor} ${traffic.freight_lots.major}</span>
+                <span class="code-badge" title="Minor Cargo (1D x 5 tons per lot)">${t.freightMinor} ${traffic.freight_lots.minor}</span>
+                <span class="code-badge" title="Incidental Cargo (1D tons per lot)">${t.freightIncidental} ${traffic.freight_lots.incidental}</span>
             </div>
             <div title="${t.mailTooltip}">
                 <strong>${t.mailDelivery}</strong> 

@@ -378,19 +378,15 @@ export function calculateTraffic(origin, destination, brokerLevel = 0, mailBonus
         low: rollDice(getPassengerDice(lowRoll))
     };
 
-    // 委託貨物ロット数とトン数の計算
+    // 委託貨物ロット数の計算
     const majorLots = rollDice(getFreightDice(majorRoll));
     const minorLots = rollDice(getFreightDice(minorRoll));
     const incidentalLots = rollDice(getFreightDice(incidentalRoll));
 
-    const totalMajorTons = rollDice(majorLots) * 10;
-    const totalMinorTons = rollDice(minorLots) * 5;
-    const totalIncidentalTons = rollDice(incidentalLots) * 1;
-
     const freightLotsObj = {
-        major: majorLots, major_tons: totalMajorTons,
-        minor: minorLots, minor_tons: totalMinorTons,
-        incidental: incidentalLots, incidental_tons: totalIncidentalTons
+        major: majorLots,
+        minor: minorLots,
+        incidental: incidentalLots
     };
 
     // 郵便判定 (Mail DM)
