@@ -47,10 +47,10 @@ AI は以下の URL 形式に直接アクセスすることで、特定のルー
 ユーザーから単に「Lunion (2124) からの交易」とだけ指定され、目的地の座標 (Hex) が不明な場合、AI は **TravellerMap API の Jump 検索** を使用して n パーセク以内の星系一覧を自律的に取得してください。
 
 **n パーセク以内の星系データ (JSON) を取得する URL 形式:**
-`https://travellermap.com/api/jump?sector=[Sector]&hex=[OriginHex]&jump=[Distance]`
+`https://travellermap.com/api/jumpworlds?sector=[Sector]&hex=[OriginHex]&jump=[Distance]`
 
 * 例: Lunion (Spinward Marches 2124) から 2 パーセク以内の星系を取得
-  `https://travellermap.com/api/jump?sector=Spinward%20Marches&hex=2124&jump=2`
+  `https://travellermap.com/api/jumpworlds?sector=Spinward%20Marches&hex=2124&jump=2`
 * このAPIは JSON を返します（`Worlds` 配列内に各星系の `Hex`, `Name`, `UWP`等が含まれる）。
 * ここで取得した近隣星系の `Hex` を、本ツールの公開URL (`https://yasabihhagure.github.io/TravellerTradeAPI/#/trade/[Sector]/Origin/[Destination]`) に当てはめてルート計算に繋げてください。
 
