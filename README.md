@@ -1,5 +1,7 @@
 # Traveller Trade API (TTA) - AI Agent Guide
 
+**公開URL (GitHub Pages):** [https://yasabihhagure.github.io/TravellerTradeAPI/](https://yasabihhagure.github.io/TravellerTradeAPI/)
+
 本ツールは、人間だけでなく **Gemini, ChatGPT, Claude 等の AI エージェント** がブラウジングやツール実行を通じて自律的に効率的な貿易ルートを計算できるように設計されています。
 
 ## AI エージェントによる利用方法
@@ -7,7 +9,7 @@
 ### 1. URL パラメータによる直接計算
 AI は以下の URL 形式に直接アクセスすることで、特定のルートの貿易分析を即座に実行できます。
 
-`index.html#/trade/[Sector]/[OriginHex]/[DestinationHex]?broker=[Level]`
+`https://yasabihhagure.github.io/TravellerTradeAPI/#/trade/[Sector]/[OriginHex]/[DestinationHex]?broker=[Level]`
 
 - **Sector**: セクター名（例: `Spinward-Marches`）
 - **OriginHex**: 出発地の座標（例: `2124`）
@@ -47,7 +49,7 @@ AI は以下の URL 形式に直接アクセスすることで、特定のルー
 *   例: Lunion (Spinward Marches 2124) から 2 パーセク以内の星系を取得
     `https://travellermap.com/api/jump?sector=Spinward%20Marches&hex=2124&jump=2`
 *   このAPIは JSON を返します（`Worlds` 配列内に各星系の `Hex`, `Name`, `UWP`等が含まれる）。
-*   ここで取得した近隣星系の `Hex` を、本ツールの `/trade/[Sector]/Origin/[Destination]` に当てはめてルート計算に繋げてください。
+*   ここで取得した近隣星系の `Hex` を、本ツールの公開URL (`https://yasabihhagure.github.io/TravellerTradeAPI/#/trade/[Sector]/Origin/[Destination]`) に当てはめてルート計算に繋げてください。
 
 ### 4. 星図（マップ画像）の取得方法
 AI はユーザーへのプレゼンテーションを豊かにするため、対象エリアの星図画像URLを動的に生成して提示できます。
