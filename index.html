@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Traveller Trade API (TTA)</title>
+  <meta name="description" content="TRPG Traveller (Update 2022) 準拠の星間貿易計算ツール。AIエージェントによる自動ルート分析に対応。">
+  <!-- Google Fonts: Inter and Fira Code for a high-tech vibe -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&family=Inter:wght@400;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+  <header>
+    <h1>Traveller Trade API</h1>
+    <p class="subtitle">AI-Friendly Interstellar Trade Analysis Engine</p>
+  </header>
+
+  <main>
+    <section class="search-container">
+      <div class="form-grid">
+        <div class="input-field">
+          <label for="sector">Sector</label>
+          <input type="text" id="sector" placeholder="Spinward-Marches" value="">
+        </div>
+        <div class="input-field">
+          <label for="origin-hex">Origin Hex</label>
+          <input type="text" id="origin-hex" placeholder="2124" value="">
+        </div>
+        <div class="input-field">
+          <label for="dest-hex">Destination Hex</label>
+          <input type="text" id="dest-hex" placeholder="2125" value="">
+        </div>
+        <div class="input-field">
+          <label for="broker">Broker Level</label>
+          <input type="number" id="broker" min="0" max="6" value="0">
+        </div>
+      </div>
+      <button id="search-btn">Analyze Route</button>
+    </section>
+
+    <section id="results-area">
+      <!-- Results will be injected here by main.js -->
+      <div class="card" id="welcome-message">
+        <p>セクター名と座標を入力して、「Analyze Route」をクリックしてください。AIエージェントはこのページに直接アクセスして貿易ルートを提案できます。</p>
+      </div>
+    </section>
+
+    <!-- The AI Bridge: JSON metadata for AI parsing -->
+    <script id="tta-data" type="application/json">
+    {
+      "api_version": "1.0.0",
+      "status": "idle",
+      "route_analysis": null
+    }
+    </script>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Traveller Trade API (TTA). Based on Mongoose Traveller 2nd Edition Update 2022.</p>
+    <p style="font-size: 0.6rem; opacity: 0.5; margin-top: 1rem;">This tool is designed for AI interaction. Human users
+      are also welcome.</p>
+  </footer>
+
+  <script type="module" src="./main.js"></script>
+</body>
+
+</html>
