@@ -36,6 +36,7 @@ async function main() {
         const recommendations = analyzeTradeRoute(originData, destData, brokerLevel);
 
         // AI抽出用のJSONを全く同じ形式で構成
+        // analyzeTradeRoute の新しい戻り値形式 (recommendations, traffic含む) を展開
         const resultJson = {
             api_version: "1.0.0",
             status: "ready",
@@ -52,7 +53,8 @@ async function main() {
                     uwp: destData.uwp,
                     tradeCodes: destData.tradeCodes
                 },
-                recommendations: recommendations
+                recommendations: recommendations.recommendations,
+                traffic: recommendations.traffic
             }
         };
 
