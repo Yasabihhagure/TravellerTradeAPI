@@ -1,9 +1,9 @@
-# ChatGPT (LLM) 連携検証項目
+# AI Agent 連携検証項目
 
-本ツール (Traveller Trade API) を実際の環境（GitHub Pages 等）にデプロイした後、ターゲットユーザーである ChatGPT (Web Browsing 機能等を持つ LLM) が、仕様通りにツールを使いこなせるかを確認するための検証手順とプロンプト集です。
+本ツール (Traveller Trade API) を実際の環境（GitHub Pages 等）にデプロイした後、ターゲットユーザーである AI Agent (Claude Code, Antigravity等) が、仕様通りにツールを使いこなせるかを確認するための検証手順とプロンプト集です。
 
 ## 推奨検証環境
-*   **対象LLM**: ChatGPT (GPT-4 / GPT-4o 等、ウェブブラウジング機能が有効なモデル)
+*   **対象LLM**: AI Agent (Claude Code, Antigravity)
 *   **デプロイ先**: `[あなたのデプロイ先 URL]` (例: `https://[username].github.io/TravellerTradeAPI/`)
 
 ---
@@ -61,8 +61,8 @@
 > Spinward Marches の Earth (0000) から Mars (0001) への貿易ルートを計算してください。
 
 **✅ 期待される結果**:
-*   LLM がツールにアクセスするが、ツール側でエラー（"World not found" 等）が発生する。
-*   LLM がエラー内容を正確に把握し、「指定された座標 (0000 や 0001) は TravellerMap 上に存在しないため、計算できませんでした。正しい座標または星系名を教えてください」と適切にユーザーにフィードバックを返す。
+*   AI Agent がツールにアクセスするが、ツール側でエラー（"World not found" 等）が発生する。
+*   AI Agent がエラー内容を正確に把握し、「指定された座標 (0000 や 0001) は TravellerMap 上に存在しないため、計算できませんでした。正しい座標または星系名を教えてください」と適切にユーザーにフィードバックを返す。
 
 ---
-**テスト完了条件**: すべてのフェーズで、ChatGPT が幻覚（ハルシネーション）による適当な返答ではなく、**実際にツールの `tta-data` または TravellerMap API から取得した「事実」に基づいて** 返答を生成できれば検証成功となります。
+**テスト完了条件**: すべてのフェーズで、AI Agent が幻覚（ハルシネーション）による適当な返答ではなく、**実際にツールの `tta-data` または TravellerMap API から取得した「事実」に基づいて** 返答を生成できれば検証成功となります。
