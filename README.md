@@ -2,7 +2,7 @@
 
 **公開URL (GitHub Pages):** [https://yasabihhagure.github.io/TravellerTradeAPI/](https://yasabihhagure.github.io/TravellerTradeAPI/)
 
-本ツールは、人間だけでなく **Gemini, ChatGPT, Claude 等の AI エージェント** がブラウジングやツール実行を通じて自律的に効率的な貿易ルートを計算できるように設計されています。
+本ツールは、人間だけでなく **Claude Code や Antigravity 等の AI Agent** がブラウジングやツール実行を通じて自律的に効率的な貿易ルートを計算できるように設計されています。
 
 ## AI エージェントによる利用方法
 
