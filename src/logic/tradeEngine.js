@@ -71,10 +71,10 @@ export const TRADE_CODES_INFO = {
 };
 
 export const PASSENGER_TYPES_INFO = {
-    high: { name_en: 'High', name_ja: 'High / 特等' },
-    middle: { name_en: 'Middle', name_ja: 'Middle / 1等' },
-    basic: { name_en: 'Basic', name_ja: 'Basic / 2等' },
-    low: { name_en: 'Low', name_ja: 'Low / 冷凍' },
+    high: { name_en: 'High', name_ja: '特等' },
+    middle: { name_en: 'Middle', name_ja: '1等' },
+    basic: { name_en: 'Basic', name_ja: '2等' },
+    low: { name_en: 'Low', name_ja: '冷凍' },
 };
 
 
