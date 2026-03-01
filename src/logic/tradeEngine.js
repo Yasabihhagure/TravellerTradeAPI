@@ -187,9 +187,10 @@ function getPriceModifier(type, result) {
  * @param {Object} origin - 出発地のデータ
  * @param {Object} destination - 目的地のデータ
  * @param {number} brokerLevel - キャラクターのブローカー技能レベル
+ * @param {number} mailBonus - 郵便配達判定用ボーナス（デフォルト0）
  * @returns {Object} 分析結果
  */
-export function analyzeTradeRoute(origin, destination, brokerLevel = 0) {
+export function analyzeTradeRoute(origin, destination, brokerLevel = 0, mailBonus = 0) {
     const recommendations = TRADE_GOODS.map(item => {
         // 1. 出発地での入手可能性チェック
         const isAvailable = item.availability.includes('All') ||
@@ -248,7 +249,7 @@ export function analyzeTradeRoute(origin, destination, brokerLevel = 0) {
         origin,
         destination,
         recommendations: recommendations.slice(0, 5), // 上位5件
-        traffic: calculateTraffic(origin)
+        traffic: calculateTraffic(origin, mailBonus)
     };
 }
 
@@ -295,29 +296,48 @@ function getFreightDice(trafficRoll) {
 }
 
 /**
- * 星系の人口に基づく旅客・貨物の発生ダイス数を算出
+ * 星系のUWP等に基づく旅客・貨物・郵便の発生ダイス数を算出
  * @param {Object} world - 星系データ
+ * @param {number} mailBonus - 郵便配達判定用ボーナス（武装、ランク等）
  * @returns {Object} 旅客・郵便等の情報
  */
-export function calculateTraffic(world) {
-    // UWPから人口値 (1文字目: Starport, 2: Size, 3: Atm, 4: Hyd, 5: Pop)
+export function calculateTraffic(world, mailBonus = 0) {
     let popVal = 0;
-    if (world.uwp && world.uwp.length >= 5) {
-        const popChar = world.uwp[4];
-        popVal = parseInt(popChar, 16) || 0; // A=10, B=11...
+    let starport = 'X';
+    let tlVal = 0;
+
+    if (world.uwp && world.uwp.length >= 7) {
+        starport = world.uwp[0].toUpperCase();
+        popVal = parseInt(world.uwp[4], 16) || 0;
+
+        const dashIdx = world.uwp.indexOf('-');
+        if (dashIdx !== -1 && world.uwp.length > dashIdx + 1) {
+            tlVal = parseInt(world.uwp.substring(dashIdx + 1), 16) || 0;
+        }
     }
 
-    const popDM = Math.max(0, popVal - 4);
+    // Traffic DM (交通量修正値) の計算
+    let trafficDM = 0;
+    if (popVal <= 1) trafficDM -= 4;
+    else if (popVal === 6 || popVal === 7) trafficDM += 1;
+    else if (popVal >= 8) trafficDM += 3;
 
-    // それぞれの旅客クラスごとに独立して 2D + 共通DM + クラス固有DM を判定
-    // 固有DM: High(-4), Middle(0), Basic(0), Low(+1)
-    const highRoll = Math.max(0, rollDice(2) + popDM - 4);
-    const middleRoll = Math.max(0, rollDice(2) + popDM);
-    const basicRoll = Math.max(0, rollDice(2) + popDM);
-    const lowRoll = Math.max(0, rollDice(2) + popDM + 1);
+    if (starport === 'A') trafficDM += 2;
+    else if (starport === 'B') trafficDM += 1;
+    else if (starport === 'E') trafficDM -= 1;
+    else if (starport === 'X') trafficDM -= 3;
 
-    // 貨物用 (共通ルール)
-    const freightRoll = Math.max(0, rollDice(2) + popDM);
+    if (tlVal <= 6) trafficDM -= 1;
+    else if (tlVal >= 9) trafficDM += 2;
+
+    // 旅客判定 (2D + Traffic DM + クラス別DM)
+    const highRoll = Math.max(0, rollDice(2) + trafficDM - 4);
+    const middleRoll = Math.max(0, rollDice(2) + trafficDM);
+    const basicRoll = Math.max(0, rollDice(2) + trafficDM);
+    const lowRoll = Math.max(0, rollDice(2) + trafficDM + 1);
+
+    // 貨物判定 (2D + Traffic DM)
+    const freightRoll = Math.max(0, rollDice(2) + trafficDM);
 
     const passengers = {
         high: rollDice(getPassengerDice(highRoll)),
@@ -328,15 +348,26 @@ export function calculateTraffic(world) {
 
     const freightLots = rollDice(getFreightDice(freightRoll));
 
-    // 郵便表 (12以上で発生)
-    const mailDM = Math.floor(getFreightDice(freightRoll) / 2);
-    const mailRoll = rollDice(2) + mailDM;
+    // 郵便判定 (Mail DM)
+    let baseMailDM = 0;
+    if (trafficDM <= -10) baseMailDM = -2;
+    else if (trafficDM <= -5) baseMailDM = -1;
+    else if (trafficDM <= 4) baseMailDM = 0;
+    else if (trafficDM <= 9) baseMailDM = 1;
+    else baseMailDM = 2;
+
+    if (tlVal <= 5) {
+        baseMailDM -= 4;
+    }
+
+    const totalMailDM = baseMailDM + mailBonus;
+    const mailRoll = rollDice(2) + totalMailDM;
     const hasMail = mailRoll >= 12;
 
     return {
         passengers: passengers,
         freight_lots: freightLots,
         has_mail: hasMail,
-        logic: `Traffic rolls (H/M/B/L/F): ${highRoll}/${middleRoll}/${basicRoll}/${lowRoll}/${freightRoll}. Mail roll: ${mailRoll}.`
+        logic: `Traffic DM: ${trafficDM}, Traffic rolls (H/M/B/L/F): ${highRoll}/${middleRoll}/${basicRoll}/${lowRoll}/${freightRoll} | Mail roll: 2D+${totalMailDM} = ${mailRoll}`
     };
 }

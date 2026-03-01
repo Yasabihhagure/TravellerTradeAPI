@@ -12,7 +12,8 @@ const elements = {
   searchBtn: document.getElementById('search-btn'),
   resultsArea: document.getElementById('results-area'),
   ttaData: document.getElementById('tta-data'),
-  langSelect: document.getElementById('lang-select')
+  langSelect: document.getElementById('lang-select'),
+  mailBonus: document.getElementById('mail-bonus')
 };
 
 // UI静的要素の取得
@@ -21,6 +22,7 @@ const uiElements = {
   labelOrigin: document.querySelector('label[for="origin-hex"]'),
   labelDest: document.querySelector('label[for="dest-hex"]'),
   labelBroker: document.querySelector('label[for="broker"]'),
+  labelMailBonus: document.querySelector('label[for="mail-bonus"]'),
   searchBtnText: elements.searchBtn,
   footerWelcome: document.querySelector('footer p:nth-child(2)'),
 };
@@ -31,6 +33,7 @@ const UI_TEXTS = {
     origin: "Origin Hex",
     dest: "Destination Hex",
     broker: "Broker Level",
+    mailBonus: "Mail Bonus",
     analyze: "Analyze Route",
     footer: "This tool is designed for AI interaction. Human users are also welcome.",
     alert: "Please fill in Sector, Origin, and Destination.",
@@ -53,6 +56,7 @@ const UI_TEXTS = {
     origin: "出発座標 (Hex)",
     dest: "目的座標 (Hex)",
     broker: "ブローカー技能",
+    mailBonus: "郵便ボーナス",
     analyze: "ルートを分析",
     footer: "このツールはAIエージェントの処理向けに設計されています。人間の利用も歓迎します。",
     alert: "セクター、出発地、目的地を入力してください。",
@@ -80,6 +84,7 @@ function updateStaticUI() {
   if (uiElements.labelOrigin) uiElements.labelOrigin.textContent = t.origin;
   if (uiElements.labelDest) uiElements.labelDest.textContent = t.dest;
   if (uiElements.labelBroker) uiElements.labelBroker.textContent = t.broker;
+  if (uiElements.labelMailBonus) uiElements.labelMailBonus.textContent = t.mailBonus;
   if (uiElements.searchBtnText) uiElements.searchBtnText.textContent = t.analyze;
   if (uiElements.footerWelcome) uiElements.footerWelcome.textContent = t.footer;
 }
@@ -113,6 +118,10 @@ async function performAnalysis() {
   const originHex = elements.origin.value.trim();
   const destHex = elements.dest.value.trim();
   const broker = parseInt(elements.broker.value) || 0;
+  const mailBonus = parseInt(elements.mailBonus.value) || 0;
+
+  // URLハッシュの更新
+  window.history.replaceState(null, null, `#/trade/${encodeURIComponent(sector)}/${encodeURIComponent(originHex)}/${encodeURIComponent(destHex)}?broker=${broker}&mail_bonus=${mailBonus}&lang=${currentLang}`);
 
   if (!sector || !originHex || !destHex) {
     alert(t.alert);
@@ -128,7 +137,7 @@ async function performAnalysis() {
       getWorldData(sector, destHex)
     ]);
 
-    const analysis = analyzeTradeRoute(originData, destData, broker);
+    const analysis = analyzeTradeRoute(originData, destData, broker, mailBonus);
     renderResults(analysis);
 
     const localizedRecommendations = analysis.recommendations.map(r => ({
@@ -145,7 +154,7 @@ async function performAnalysis() {
     }));
 
     elements.ttaData.textContent = JSON.stringify({
-      api_version: "1.1.1",
+      api_version: "1.2.0",
       status: "ready",
       language: currentLang,
       route_analysis: {
@@ -270,6 +279,9 @@ function handleRouting() {
       elements.dest.value = decodeURIComponent(path[2]);
       if (params.has('broker')) {
         elements.broker.value = params.get('broker');
+      }
+      if (params.has('mail_bonus')) {
+        elements.mailBonus.value = params.get('mail_bonus');
       }
       if (params.has('lang')) {
         const urlLang = params.get('lang');

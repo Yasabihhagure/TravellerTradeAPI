@@ -15,16 +15,29 @@ async function main() {
     const args = process.argv.slice(2);
 
     if (args.length < 3) {
-        console.error("Usage: node cli.js <Sector> <OriginHex> <DestinationHex> [BrokerLevel] [Language]");
-        console.error("Example: node cli.js \"Spinward-Marches\" 2124 2125 1 ja");
+        console.error("Usage: node cli.js <Sector> <OriginHex> <DestinationHex> [BrokerLevel] [MailBonus] [Language]");
+        console.error("Example: node cli.js \"Spinward-Marches\" 2124 2125 1 2 ja");
         process.exit(1);
     }
 
     const sector = args[0];
     const originHex = args[1];
     const destHex = args[2];
-    const brokerLevel = args.length >= 4 ? parseInt(args[3], 10) : 0;
-    const lang = (args.length >= 5 && args[4] === 'ja') ? 'ja' : 'en';
+
+    let brokerLevel = 0;
+    let mailBonus = 0;
+    let lang = 'en';
+
+    let aIdx = 3;
+    if (args.length > aIdx && !['ja', 'en'].includes(args[aIdx])) {
+        brokerLevel = parseInt(args[aIdx++], 10) || 0;
+    }
+    if (args.length > aIdx && !['ja', 'en'].includes(args[aIdx])) {
+        mailBonus = parseInt(args[aIdx++], 10) || 0;
+    }
+    if (args.length > aIdx && ['ja', 'en'].includes(args[aIdx])) {
+        lang = args[aIdx];
+    }
 
     try {
         // 双方の星系データを取得
@@ -34,7 +47,7 @@ async function main() {
         ]);
 
         // 貿易分析の実行
-        const recommendations = analyzeTradeRoute(originData, destData, brokerLevel);
+        const recommendations = analyzeTradeRoute(originData, destData, brokerLevel, mailBonus);
 
         // Web出力にあわせたローカライズ
         const localizedRecommendations = recommendations.recommendations.map(r => ({
@@ -52,7 +65,7 @@ async function main() {
 
         // AI抽出用のJSONを構成
         const resultJson = {
-            api_version: "1.1.1",
+            api_version: "1.2.0",
             status: "ready",
             language: lang,
             route_analysis: {
