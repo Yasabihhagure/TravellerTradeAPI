@@ -7,6 +7,7 @@ import { analyzeTradeRoute, TRADE_CODES_INFO, PASSENGER_TYPES_INFO } from './src
 const elements = {
   sector: document.getElementById('sector'),
   origin: document.getElementById('origin-hex'),
+  destSector: document.getElementById('dest-sector'),
   dest: document.getElementById('dest-hex'),
   broker: document.getElementById('broker'),
   searchBtn: document.getElementById('search-btn'),
@@ -20,6 +21,7 @@ const elements = {
 const uiElements = {
   labelSector: document.querySelector('label[for="sector"]'),
   labelOrigin: document.querySelector('label[for="origin-hex"]'),
+  labelDestSector: document.querySelector('label[for="dest-sector"]'),
   labelDest: document.querySelector('label[for="dest-hex"]'),
   labelBroker: document.querySelector('label[for="broker"]'),
   labelMailBonus: document.querySelector('label[for="mail-bonus"]'),
@@ -29,8 +31,9 @@ const uiElements = {
 
 const UI_TEXTS = {
   en: {
-    sector: "Sector",
+    sector: "Origin Sector",
     origin: "Origin Hex",
+    destSector: "Dest Sector",
     dest: "Destination Hex",
     broker: "Broker Level",
     mailBonus: "Mail Bonus",
@@ -54,8 +57,9 @@ const UI_TEXTS = {
     noProfit: "No profitable goods found for this route.",
   },
   ja: {
-    sector: "セクター",
+    sector: "出発セクター",
     origin: "出発座標 (Hex)",
+    destSector: "宛先セクター",
     dest: "目的座標 (Hex)",
     broker: "ブローカー技能",
     mailBonus: "郵便ボーナス",
@@ -86,6 +90,7 @@ function updateStaticUI() {
   const t = UI_TEXTS[currentLang];
   if (uiElements.labelSector) uiElements.labelSector.textContent = t.sector;
   if (uiElements.labelOrigin) uiElements.labelOrigin.textContent = t.origin;
+  if (uiElements.labelDestSector) uiElements.labelDestSector.textContent = t.destSector;
   if (uiElements.labelDest) uiElements.labelDest.textContent = t.dest;
   if (uiElements.labelBroker) uiElements.labelBroker.textContent = t.broker;
   if (uiElements.labelMailBonus) uiElements.labelMailBonus.textContent = t.mailBonus;
@@ -120,6 +125,7 @@ async function performAnalysis() {
   const t = UI_TEXTS[currentLang];
   const sector = elements.sector.value.trim();
   const originHex = elements.origin.value.trim();
+  const destSector = elements.destSector.value.trim() || sector;
   const destHex = elements.dest.value.trim();
   const broker = parseInt(elements.broker.value) || 0;
   const mailBonus = parseInt(elements.mailBonus.value) || 0;
@@ -135,7 +141,7 @@ async function performAnalysis() {
   try {
     const [originData, destData] = await Promise.all([
       getWorldData(sector, originHex),
-      getWorldData(sector, destHex)
+      getWorldData(destSector, destHex)
     ]);
 
     const analysis = analyzeTradeRoute(originData, destData, broker, mailBonus);
@@ -155,7 +161,7 @@ async function performAnalysis() {
     }));
 
     elements.ttaData.textContent = JSON.stringify({
-      api_version: "1.2.0",
+      api_version: "1.3.0",
       status: "ready",
       language: currentLang,
       route_analysis: {
@@ -166,7 +172,8 @@ async function performAnalysis() {
       }
     }, null, 2);
 
-    window.location.hash = `/trade/${sector}/${originHex}/${destHex}?broker=${broker}&mail_bonus=${mailBonus}&lang=${currentLang}`;
+    const destSectorPath = elements.destSector.value.trim() ? `/${encodeURIComponent(destSector)}` : '';
+    window.location.hash = `/trade/${encodeURIComponent(sector)}/${originHex}${destSectorPath}/${destHex}?broker=${broker}&mail_bonus=${mailBonus}&lang=${currentLang}`;
 
   } catch (error) {
     elements.resultsArea.innerHTML = `
@@ -282,7 +289,15 @@ function handleRouting() {
     if (path.length >= 3) {
       elements.sector.value = decodeURIComponent(path[0]);
       elements.origin.value = decodeURIComponent(path[1]);
-      elements.dest.value = decodeURIComponent(path[2]);
+
+      if (path.length >= 4) {
+        elements.destSector.value = decodeURIComponent(path[2]);
+        elements.dest.value = decodeURIComponent(path[3]);
+      } else {
+        elements.destSector.value = '';
+        elements.dest.value = decodeURIComponent(path[2]);
+      }
+
       if (params.has('broker')) {
         elements.broker.value = params.get('broker');
       }

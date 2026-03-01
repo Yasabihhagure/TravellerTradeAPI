@@ -5,10 +5,12 @@ import { analyzeTradeRoute } from './src/logic/tradeEngine.js';
  * Traveller Trade API - AI Agent CLI Tool
  * 
  * 使い方:
- * node cli.js <Sector> <OriginHex> <DestinationHex> [BrokerLevel]
+ * node cli.js <Sector> <OriginHex> <DestinationHex> [BrokerLevel] [MailBonus] [Language]
+ * DestinationHex には "Sector:Hex" 形式で別セクターも指定可能。
  * 
  * 例:
  * node cli.js "Spinward-Marches" 2124 2125 1
+ * node cli.js "Spinward-Marches" 3223 "Deneb:0124"
  */
 
 async function main() {
@@ -17,12 +19,20 @@ async function main() {
     if (args.length < 3) {
         console.error("Usage: node cli.js <Sector> <OriginHex> <DestinationHex> [BrokerLevel] [MailBonus] [Language]");
         console.error("Example: node cli.js \"Spinward-Marches\" 2124 2125 1 2 ja");
+        console.error("Different Sector Example: node cli.js \"Spinward-Marches\" 3223 \"Deneb:0124\"");
         process.exit(1);
     }
 
     const sector = args[0];
     const originHex = args[1];
-    const destHex = args[2];
+
+    let destSector = sector;
+    let destHex = args[2];
+    if (destHex.includes(':')) {
+        const parts = destHex.split(':');
+        destSector = parts[0];
+        destHex = parts[1];
+    }
 
     let brokerLevel = 0;
     let mailBonus = 0;
@@ -43,7 +53,7 @@ async function main() {
         // 双方の星系データを取得
         const [originData, destData] = await Promise.all([
             getWorldData(sector, originHex),
-            getWorldData(sector, destHex)
+            getWorldData(destSector, destHex)
         ]);
 
         // 貿易分析の実行
@@ -65,7 +75,7 @@ async function main() {
 
         // AI抽出用のJSONを構成
         const resultJson = {
-            api_version: "1.2.0",
+            api_version: "1.3.0",
             status: "ready",
             language: lang,
             route_analysis: {
