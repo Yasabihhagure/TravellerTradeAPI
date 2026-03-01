@@ -185,7 +185,7 @@ function getPriceModifier(type, result) {
 /**
  * 貿易ルートの分析を行う
  * @param {Object} origin - 出発地のデータ
- * @param {Object} destination - 目的地のデータ
+ * @param {Object} destination - 目的地のデータ (委託貨物計算用)
  * @param {number} brokerLevel - キャラクターのブローカー技能レベル
  * @param {number} mailBonus - 郵便配達判定用ボーナス（デフォルト0）
  * @returns {Object} 分析結果
@@ -249,7 +249,7 @@ export function analyzeTradeRoute(origin, destination, brokerLevel = 0, mailBonu
         origin,
         destination,
         recommendations: recommendations.slice(0, 5), // 上位5件
-        traffic: calculateTraffic(origin, mailBonus)
+        traffic: calculateTraffic(origin, destination, brokerLevel, mailBonus)
     };
 }
 
@@ -297,22 +297,24 @@ function getFreightDice(trafficRoll) {
 
 /**
  * 星系のUWP等に基づく旅客・貨物・郵便の発生ダイス数を算出
- * @param {Object} world - 星系データ
+ * @param {Object} origin - 出発地データ
+ * @param {Object} destination - 目的地データ
+ * @param {number} brokerLevel - 貨物探索判定用ブローカー技能レベル
  * @param {number} mailBonus - 郵便配達判定用ボーナス（武装、ランク等）
- * @returns {Object} 旅客・郵便等の情報
+ * @returns {Object} 旅客・郵便・委託貨物等の情報
  */
-export function calculateTraffic(world, mailBonus = 0) {
+export function calculateTraffic(origin, destination, brokerLevel = 0, mailBonus = 0) {
     let popVal = 0;
     let starport = 'X';
     let tlVal = 0;
 
-    if (world.uwp && world.uwp.length >= 7) {
-        starport = world.uwp[0].toUpperCase();
-        popVal = parseInt(world.uwp[4], 16) || 0;
+    if (origin.uwp && origin.uwp.length >= 7) {
+        starport = origin.uwp[0].toUpperCase();
+        popVal = parseInt(origin.uwp[4], 16) || 0;
 
-        const dashIdx = world.uwp.indexOf('-');
-        if (dashIdx !== -1 && world.uwp.length > dashIdx + 1) {
-            tlVal = parseInt(world.uwp.substring(dashIdx + 1), 16) || 0;
+        const dashIdx = origin.uwp.indexOf('-');
+        if (dashIdx !== -1 && origin.uwp.length > dashIdx + 1) {
+            tlVal = parseInt(origin.uwp.substring(dashIdx + 1), 16) || 0;
         }
     }
 
@@ -336,8 +338,38 @@ export function calculateTraffic(world, mailBonus = 0) {
     const basicRoll = Math.max(0, rollDice(2) + trafficDM);
     const lowRoll = Math.max(0, rollDice(2) + trafficDM + 1);
 
-    // 貨物判定 (2D + Traffic DM)
-    const freightRoll = Math.max(0, rollDice(2) + trafficDM);
+    // 委託貨物用: 目的地側のデータを取得
+    let destPopVal = 0;
+    let destStarport = 'X';
+    let destTlVal = 0;
+
+    if (destination && destination.uwp && destination.uwp.length >= 7) {
+        destStarport = destination.uwp[0].toUpperCase();
+        destPopVal = parseInt(destination.uwp[4], 16) || 0;
+        const dDashIdx = destination.uwp.indexOf('-');
+        if (dDashIdx !== -1 && destination.uwp.length > dDashIdx + 1) {
+            destTlVal = parseInt(destination.uwp.substring(dDashIdx + 1), 16) || 0;
+        }
+    }
+
+    // 距離(ジャンプ数)の概算算出 (-1 DM / 1pc over)
+    const distancePx = calculateJumpDistance(origin, destination);
+    const distanceDM = (Math.max(1, distancePx) - 1) * -1; // 1pcより遠い場合は-1ずつペナルティ
+
+    // 委託貨物固有 Traffic DM の算出 (両星系の要素＋ゾーン＋距離＋エフェクト)
+    let freightDM = brokerLevel; // スキル(エフェクト相当) 加算
+    freightDM += distanceDM; // 距離ペナルティ
+
+    // 両方の星系に適用される人口・宇宙港・TLのDMを合算
+    freightDM += getTargetFreightDM(popVal, starport, tlVal, origin.zone || '');
+    if (destination) {
+        freightDM += getTargetFreightDM(destPopVal, destStarport, destTlVal, destination.zone || '');
+    }
+
+    // 各貨物の判定 (2D + Freight DM + サイズ別DM)
+    const majorRoll = Math.max(0, rollDice(2) + freightDM - 4);
+    const minorRoll = Math.max(0, rollDice(2) + freightDM);
+    const incidentalRoll = Math.max(0, rollDice(2) + freightDM + 2);
 
     const passengers = {
         high: rollDice(getPassengerDice(highRoll)),
@@ -346,7 +378,20 @@ export function calculateTraffic(world, mailBonus = 0) {
         low: rollDice(getPassengerDice(lowRoll))
     };
 
-    const freightLots = rollDice(getFreightDice(freightRoll));
+    // 委託貨物ロット数とトン数の計算
+    const majorLots = rollDice(getFreightDice(majorRoll));
+    const minorLots = rollDice(getFreightDice(minorRoll));
+    const incidentalLots = rollDice(getFreightDice(incidentalRoll));
+
+    const totalMajorTons = rollDice(majorLots) * 10;
+    const totalMinorTons = rollDice(minorLots) * 5;
+    const totalIncidentalTons = rollDice(incidentalLots) * 1;
+
+    const freightLotsObj = {
+        major: majorLots, major_tons: totalMajorTons,
+        minor: minorLots, minor_tons: totalMinorTons,
+        incidental: incidentalLots, incidental_tons: totalIncidentalTons
+    };
 
     // 郵便判定 (Mail DM)
     let baseMailDM = 0;
@@ -367,9 +412,66 @@ export function calculateTraffic(world, mailBonus = 0) {
 
     return {
         passengers: passengers,
-        freight_lots: freightLots,
+        freight_lots: freightLotsObj,
         has_mail: hasMail,
         mail_containers: mailContainers,
-        logic: `Traffic DM: ${trafficDM}, Traffic rolls (H/M/B/L/F): ${highRoll}/${middleRoll}/${basicRoll}/${lowRoll}/${freightRoll} | Mail roll: 2D+${totalMailDM} = ${mailRoll}`
+        logic: `Traffic DM: ${trafficDM}, Freight DM: ${freightDM} (Broker+${brokerLevel}, Dist${distanceDM}). ` +
+            `Traffic rolls (H/M/B/L): ${highRoll}/${middleRoll}/${basicRoll}/${lowRoll} | Freight rolls (Maj/Min/Inc): ${majorRoll}/${minorRoll}/${incidentalRoll} ` +
+            `| Mail roll: 2D+${totalMailDM} = ${mailRoll}`
     };
+}
+
+/**
+ * 星系1つあたりの委託貨物共通DM (人口、宇宙港、TL、ゾーン) を算出するヘルパー
+ */
+function getTargetFreightDM(popVal, starport, tlVal, zoneStr = '') {
+    let dm = 0;
+
+    // 人口
+    if (popVal <= 1) dm -= 4;
+    else if (popVal === 6 || popVal === 7) dm += 2;
+    else if (popVal >= 8) dm += 4;
+
+    // スターポート
+    if (starport === 'A') dm += 2;
+    else if (starport === 'B') dm += 1;
+    else if (starport === 'E') dm -= 1;
+    else if (starport === 'X') dm -= 3;
+
+    // TL
+    if (tlVal <= 6) dm -= 1;
+    else if (tlVal >= 9) dm += 2;
+
+    // トラベルゾーン (A=Amber, R=Red)
+    if (zoneStr === 'A') dm -= 2;
+    else if (zoneStr === 'R') dm -= 6;
+
+    return dm;
+}
+
+/**
+ * 2星系間のジャンプ距離 (単純幾何計算)
+ */
+function calculateJumpDistance(origin, dest) {
+    if (!origin || !dest || !origin.hex || !dest.hex) return 1;
+
+    // セクターを跨ぐ場合は複雑なオフセットが必要。
+    // 現時点では簡易的に「同セクター内なら Hex距離算出」「別セクターなら固定(とりあえず4pcペナルティとしておく)」とする
+    // ※ 厳密計算APIのレスポンスや手動入力に頼らない場合の暫定値
+    if (origin.sector !== dest.sector) {
+        return 5;
+    }
+
+    const hx1 = parseInt(origin.hex.substring(0, 2), 10);
+    const hy1 = parseInt(origin.hex.substring(2, 4), 10);
+    const hx2 = parseInt(dest.hex.substring(0, 2), 10);
+    const hy2 = parseInt(dest.hex.substring(2, 4), 10);
+
+    const dx = Math.abs(hx1 - hx2);
+    const dy = Math.abs(hy1 - hy2);
+
+    // Q R offset (Traveller Hex grid coordinates)
+    const dq = Math.abs((hx1 - Math.floor(hy1 / 2)) - (hx2 - Math.floor(hy2 / 2)));
+
+    return Math.max(dx, dy, dq);
 }

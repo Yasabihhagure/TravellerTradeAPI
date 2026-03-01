@@ -2,7 +2,7 @@
  * Traveller Map API (travellermap.com) から星系データを取得する
  */
 
-const BASE_URL = 'https://travellermap.com/api/credits';
+const BASE_URL = 'https://travellermap.com/api/jumpworlds';
 
 /**
  * 指定されたセクターと座標の星系データを取得する
@@ -14,7 +14,7 @@ export async function getWorldData(sector, hex) {
   try {
     // セクター名内のハイフンをスペースに変換（APIの仕様合わせ）
     const normalizedSector = sector.replace(/-/g, ' ');
-    const url = `${BASE_URL}?sector=${encodeURIComponent(normalizedSector)}&hex=${hex}`;
+    const url = `${BASE_URL}?sector=${encodeURIComponent(normalizedSector)}&hex=${hex}&jump=0`;
     const response = await fetch(url);
 
     if (!response.ok) {
@@ -23,16 +23,18 @@ export async function getWorldData(sector, hex) {
 
     const data = await response.json();
 
-    // credits エンドポイントは単一の World オブジェクトまたは World オブジェクトを含む配列を返す
-    const world = data.World || (Array.isArray(data) ? data[0] : data);
+    // jumpworlds エンドポイントは Worlds 配列を返す
+    if (!data.Worlds || data.Worlds.length === 0) {
+      throw new Error(`No data received for ${normalizedSector} ${hex}`);
+    }
+    const world = data.Worlds[0];
 
-    // APIの応答形式に合わせる。creditsエンドポイントではキーのケースが異なる場合がある
-    // 例: "Name" または "WorldName", "UWP" または "WorldUwp"
-    const worldName = world.Name || world.WorldName || world.name;
-    const worldUwp = world.UWP || world.WorldUwp || world.uwp;
-    const worldRemarks = world.Remarks || world.WorldRemarks || world.remarks || '';
-    const worldSector = world.Sector || world.WorldSector || world.sector || normalizedSector;
-    const worldHex = world.Hex || world.WorldHex || world.hex || hex;
+    const worldName = world.Name || world.name;
+    const worldUwp = world.UWP || world.uwp;
+    const worldRemarks = world.Remarks || world.remarks || '';
+    const worldSector = world.Sector || world.sector || normalizedSector;
+    const worldHex = world.Hex || world.hex || hex;
+    const worldZone = world.Zone || world.zone || '';
 
     if (!worldName || !worldUwp) {
       throw new Error(`Incomplete data received for ${normalizedSector} ${hex}`);
@@ -49,7 +51,8 @@ export async function getWorldData(sector, hex) {
       tradeCodes: worldRemarks ? worldRemarks.split(' ') : [],
       sector: worldSector,
       hex: worldHex,
-      techLevel: techLevel
+      techLevel: techLevel,
+      zone: worldZone
     };
   } catch (error) {
     console.error('Failed to fetch world data:', error);

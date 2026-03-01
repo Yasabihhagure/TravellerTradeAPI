@@ -45,7 +45,10 @@ const UI_TEXTS = {
     failTitle: "Analysis Failed",
     portTraffic: "Port Traffic & Opportunities",
     passengers: "Passengers:",
-    freightLots: "Commissioned Freight Lots:",
+    freightLots: "Available Freight Lots:",
+    freightMajor: "Major:",
+    freightMinor: "Minor:",
+    freightIncidental: "Incidental:",
     mailDelivery: "Mail Delivery:",
     mailAvail: "Available",
     mailAvailDetail: "({0} Containers / {1}t / Cr {2})",
@@ -72,6 +75,9 @@ const UI_TEXTS = {
     portTraffic: "港の交通量と機会",
     passengers: "乗客:",
     freightLots: "委託貨物ロット:",
+    freightMajor: "大口:",
+    freightMinor: "小口:",
+    freightIncidental: "付随:",
     mailDelivery: "郵便配達:",
     mailAvail: "あり",
     mailAvailDetail: "({0}個 / {1}トン / Cr {2})",
@@ -161,7 +167,7 @@ async function performAnalysis() {
     }));
 
     elements.ttaData.textContent = JSON.stringify({
-      api_version: "1.3.0",
+      api_version: "1.4.0",
       status: "ready",
       language: currentLang,
       route_analysis: {
@@ -231,7 +237,12 @@ function renderResults(data) {
                 <span class="code-badge">${PASSENGER_TYPES_INFO.basic['name_' + currentLang]}: ${traffic.passengers.basic}</span>
                 <span class="code-badge">${PASSENGER_TYPES_INFO.low['name_' + currentLang]}: ${traffic.passengers.low}</span>
             </div>
-            <div><strong>${t.freightLots}</strong> ${traffic.freight_lots}</div>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <strong>${t.freightLots}</strong> 
+                <span class="code-badge" title="10-60 tons per lot">${t.freightMajor} ${traffic.freight_lots.major} (${traffic.freight_lots.major_tons}t)</span>
+                <span class="code-badge" title="5-30 tons per lot">${t.freightMinor} ${traffic.freight_lots.minor} (${traffic.freight_lots.minor_tons}t)</span>
+                <span class="code-badge" title="1-6 tons per lot">${t.freightIncidental} ${traffic.freight_lots.incidental} (${traffic.freight_lots.incidental_tons}t)</span>
+            </div>
             <div title="${t.mailTooltip}">
                 <strong>${t.mailDelivery}</strong> 
                 ${traffic.has_mail

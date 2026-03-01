@@ -53,21 +53,24 @@ JavaScriptを実行可能な実行環境（Antigravityの browser_subagent 等�
 ```html
 <script id="tta-data" type="application/json">
 {
-  "api_version": "1.3.0",
+  "api_version": "1.4.0",
   "status": "ready",
   "language": "en",
   "route_analysis": {
     "origin": { "name": "...", "uwp": "...", "tradeCodes": [...] },
     "destination": { "name": "...", "uwp": "...", "tradeCodes": [...] },
-    "recommendations": [
-      {
-        "item": "Advanced Electronics",
-        "purchase_dm": 2,
-        "sale_dm": 2,
-        "net_profit_potential": "Very High",
-        "logic": "Bought with DM+2..."
-      }
-    ]
+    "recommendations": [...],
+    "traffic": {
+      "passengers": { "high": 1, "middle": 2, "basic": 3, "low": 4 },
+      "freight_lots": {
+        "major": 1, "major_tons": 10,
+        "minor": 2, "minor_tons": 10,
+        "incidental": 0, "incidental_tons": 0
+      },
+      "has_mail": true,
+      "mail_containers": 1,
+      "logic": "..."
+    }
   }
 }
 </script>
@@ -197,21 +200,24 @@ When the page is loaded in a browser, trade calculation results are embedded in 
 ```html
 <script id="tta-data" type="application/json">
 {
-  "api_version": "1.3.0",
+  "api_version": "1.4.0",
   "status": "ready",
   "language": "en",
   "route_analysis": {
     "origin": { "name": "...", "uwp": "...", "tradeCodes": [...] },
     "destination": { "name": "...", "uwp": "...", "tradeCodes": [...] },
-    "recommendations": [
-      {
-        "item": "Advanced Electronics",
-        "purchase_dm": 2,
-        "sale_dm": 2,
-        "net_profit_potential": "Very High",
-        "logic": "Bought with DM+2..."
-      }
-    ]
+    "recommendations": [...],
+    "traffic": {
+      "passengers": { "high": 1, "middle": 2, "basic": 3, "low": 4 },
+      "freight_lots": {
+        "major": 1, "major_tons": 10,
+        "minor": 2, "minor_tons": 10,
+        "incidental": 0, "incidental_tons": 0
+      },
+      "has_mail": true,
+      "mail_containers": 1,
+      "logic": "..."
+    }
   }
 }
 </script>
