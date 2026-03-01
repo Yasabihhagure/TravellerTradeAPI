@@ -120,9 +120,6 @@ async function performAnalysis() {
   const broker = parseInt(elements.broker.value) || 0;
   const mailBonus = parseInt(elements.mailBonus.value) || 0;
 
-  // URLハッシュの更新
-  window.history.replaceState(null, null, `#/trade/${encodeURIComponent(sector)}/${encodeURIComponent(originHex)}/${encodeURIComponent(destHex)}?broker=${broker}&mail_bonus=${mailBonus}&lang=${currentLang}`);
-
   if (!sector || !originHex || !destHex) {
     alert(t.alert);
     return;
@@ -165,7 +162,7 @@ async function performAnalysis() {
       }
     }, null, 2);
 
-    window.location.hash = `/trade/${sector}/${originHex}/${destHex}?broker=${broker}&lang=${currentLang}`;
+    window.location.hash = `/trade/${sector}/${originHex}/${destHex}?broker=${broker}&mail_bonus=${mailBonus}&lang=${currentLang}`;
 
   } catch (error) {
     elements.resultsArea.innerHTML = `
