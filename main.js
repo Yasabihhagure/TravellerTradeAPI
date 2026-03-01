@@ -175,7 +175,7 @@ async function performAnalysis() {
  */
 function createTradeCodeBadge(c) {
   const info = TRADE_CODES_INFO[c];
-  const title = info ? `${info['name_' + currentLang]}: ${info['desc_' + currentLang]}` : "";
+  const title = info ? info['name_' + currentLang] : c;
   return `<span class="code-badge" title="${title}">${c}</span>`;
 }
 
