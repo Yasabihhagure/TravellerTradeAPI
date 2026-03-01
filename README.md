@@ -6,9 +6,30 @@
 
 ## AI エージェントによる利用方法
 
-### 1. URL パラメータによる直接計算
+> [!WARNING]  
+> **[重要 / 必読]**  
+> 本ツールのWeb版は JavaScript によって動的に描画される SPA (Single Page Application) です。
+> Claude Code や共通の `Web Fetch` ツールなど、**JSを実行せずにHTMLのみをパースするエージェントではデータ (JSON) を取得できません**。
+> そのようなAIエージェントは、Webアクセスを試みず、**必ず以下の「1. ローカルCLIツール」を使用して**ローカル環境で直接計算を実行してください。
 
-AI は以下の URL 形式に直接アクセスすることで、特定のルートの貿易分析を即座に実行できます。
+### 1. ローカルCLIツールを利用したデータ取得 (AI Agent向け推奨)
+
+リポジトリ内に同梱されている `cli.js` を Node.js で直接実行することで、Webブラウザを介さずに計算結果の JSON データを標準出力 (stdout) から即座に得ることができます。
+
+**実行形式:**
+```bash
+node cli.js "<Sector>" <OriginHex> <DestinationHex> [BrokerSkillLevel]
+```
+
+**実行例:**
+```bash
+node cli.js "Spinward Marches" 2124 2125 1
+```
+※実行すると、後述のWeb版と全く同じ形式のJSONデータが直接出力されます。
+
+### 2. URL パラメータによるブラウザからの直接計算 (ヘッドレスブラウザ対応エージェント・人間向け)
+
+JavaScriptを実行可能な実行環境（Antigravityの browser_subagent 等）を持つ場合は、以下の URL 形式にアクセスして貿易分析を即座に実行できます。
 
 `https://yasabihhagure.github.io/TravellerTradeAPI/#/trade/[Sector]/[OriginHex]/[DestinationHex]?broker=[Level]`
 
@@ -17,9 +38,9 @@ AI は以下の URL 形式に直接アクセスすることで、特定のルー
 - **DestinationHex**: 目的地の座標（例: `2526`）
 - **broker**: キャラクターの〈ブローカー〉技能レベル（デフォルト: 0）
 
-### 2. 機械判読可能なデータの取得
+### 3. 機械判読可能なデータの取得 (Web版仕様)
 
-ページが読み込まれると、HTML 内の以下のタグに計算結果が JSON 形式で埋め込まれます。AI はこの内容をパースしてユーザーに回答してください。
+ブラウザでページが読み込まれると、HTML 内の以下のタグに計算結果が JSON 形式で埋め込まれます。人間や対応エージェントはこの内容をパースしてユーザーに回答してください（CLIツールを使う場合はこのJSONが標準出力されます）。
 
 ```html
 <script id="tta-data" type="application/json">
@@ -41,20 +62,6 @@ AI は以下の URL 形式に直接アクセスすることで、特定のルー
 }
 </script>
 ```
-
-### 3. [代替手段] ローカルCLIツールを利用した直接計算
-Web Fetchやブラウジング機能がJavaScriptを実行できず、SPAから動的にデータを抽出できない環境のAIエージェント（Claude Code 等）は、本リポジトリに同梱されている `cli.js` を直接実行してJSON出力を得ることができます。
-
-**実行形式:**
-```bash
-node cli.js "<Sector>" <OriginHex> <DestinationHex> [BrokerSkillLevel]
-```
-
-**実行例:**
-```bash
-node cli.js "Spinward Marches" 2124 2125 1
-```
-実行すると、Web版と全く同じ形式のJSONデータが標準出力 (stdout) に直接表示されます。
 
 ### 4. [重要] 出発地周辺の目的地候補 (Hex) を見つける方法
 
