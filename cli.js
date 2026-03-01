@@ -15,8 +15,8 @@ async function main() {
     const args = process.argv.slice(2);
 
     if (args.length < 3) {
-        console.error("Usage: node cli.js <Sector> <OriginHex> <DestinationHex> [BrokerLevel]");
-        console.error("Example: node cli.js \"Spinward-Marches\" 2124 2125 1");
+        console.error("Usage: node cli.js <Sector> <OriginHex> <DestinationHex> [BrokerLevel] [Language]");
+        console.error("Example: node cli.js \"Spinward-Marches\" 2124 2125 1 ja");
         process.exit(1);
     }
 
@@ -24,6 +24,7 @@ async function main() {
     const originHex = args[1];
     const destHex = args[2];
     const brokerLevel = args.length >= 4 ? parseInt(args[3], 10) : 0;
+    const lang = (args.length >= 5 && args[4] === 'ja') ? 'ja' : 'en';
 
     try {
         // 双方の星系データを取得
@@ -35,11 +36,25 @@ async function main() {
         // 貿易分析の実行
         const recommendations = analyzeTradeRoute(originData, destData, brokerLevel);
 
-        // AI抽出用のJSONを全く同じ形式で構成
-        // analyzeTradeRoute の新しい戻り値形式 (recommendations, traffic含む) を展開
+        // Web出力にあわせたローカライズ
+        const localizedRecommendations = recommendations.recommendations.map(r => ({
+            item: r['item_' + lang],
+            purchase_dm: r.purchase_dm,
+            sale_dm: r.sale_dm,
+            est_purchase_price: r.est_purchase_price,
+            est_sale_price: r.est_sale_price,
+            profit_per_ton: r.profit_per_ton,
+            profit_margin: r.profit_margin,
+            stock_tons: r.stock_tons,
+            net_profit_potential: r.net_profit_potential,
+            logic: r.logic
+        }));
+
+        // AI抽出用のJSONを構成
         const resultJson = {
-            api_version: "1.0.0",
+            api_version: "1.1.0",
             status: "ready",
+            language: lang,
             route_analysis: {
                 origin: {
                     name: originData.name,
@@ -53,12 +68,12 @@ async function main() {
                     uwp: destData.uwp,
                     tradeCodes: destData.tradeCodes
                 },
-                recommendations: recommendations.recommendations,
+                recommendations: localizedRecommendations,
                 traffic: recommendations.traffic
             }
         };
 
-        // 標準出力 (AIがパースしやすいようフォーマットして出力)
+        // 標準出力
         console.log(JSON.stringify(resultJson, null, 2));
 
     } catch (error) {

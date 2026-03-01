@@ -7,36 +7,68 @@
  * 貿易品の定義リスト (貿易関連データ集.md より)
  */
 export const TRADE_GOODS = [
-    { id: '11', name: '一般電子機器', basePrice: 20000, purchaseDM: { In: 2, Ht: 3 }, saleDM: { Ni: 1, Ri: 1, As: 1 }, availability: ['All'], stockFormula: "2D*10" },
-    { id: '12', name: '一般工業製品', basePrice: 10000, purchaseDM: { Na: 2, In: 5 }, saleDM: { Ni: 3, Ag: 2 }, availability: ['All'], stockFormula: "2D*10" },
-    { id: '13', name: '一般加工品', basePrice: 20000, purchaseDM: { Na: 2, In: 5 }, saleDM: { Ni: 3, Hi: 2 }, availability: ['All'], stockFormula: "2D*10" },
-    { id: '14', name: '一般原材料', basePrice: 5000, purchaseDM: { Ag: 3, Ga: 2 }, saleDM: { In: 2, Po: 2 }, availability: ['All'], stockFormula: "2D*20" },
-    { id: '15', name: '一般消耗品', basePrice: 500, purchaseDM: { Ag: 3, Wa: 2, Ga: 1, As: -4 }, saleDM: { As: 1, Fl: 1, Ic: 1, Hi: 1 }, availability: ['All'], stockFormula: "2D*20" },
-    { id: '16', name: '一般鉱石', basePrice: 1000, purchaseDM: { As: 4 }, saleDM: { In: 3, Ni: 1 }, availability: ['All'], stockFormula: "2D*20" },
-    { id: '21', name: '先進電子機器', basePrice: 100000, purchaseDM: { In: 2, Ht: 3 }, saleDM: { Ni: 1, Ri: 2, As: 3 }, availability: ['In', 'Ht'], stockFormula: "1D*5" },
-    { id: '22', name: '先進機械部品', basePrice: 75000, purchaseDM: { In: 2, Ht: 1 }, saleDM: { As: 2, Ni: 1 }, availability: ['In', 'Ht'], stockFormula: "1D*5" },
-    { id: '23', name: '先進加工品', basePrice: 100000, purchaseDM: { In: 1 }, saleDM: { Hi: 1, Ri: 2 }, availability: ['In', 'Ht'], stockFormula: "1D*5" },
-    { id: '24', name: '先進兵器', basePrice: 150000, purchaseDM: { Ht: 2 }, saleDM: { Po: 1, Amber: 2, Red: 4 }, availability: ['In', 'Ht'], stockFormula: "1D*5" },
-    { id: '25', name: '先進車両', basePrice: 180000, purchaseDM: { Ht: 2 }, saleDM: { As: 2, Ri: 2 }, availability: ['In', 'Ht'], stockFormula: "1D*5" },
-    { id: '26', name: '生化学製品', basePrice: 50000, purchaseDM: { Ag: 1, Wa: 2 }, saleDM: { In: 2 }, availability: ['Ag', 'Wa'], stockFormula: "1D*5" },
-    { id: '31', name: '貴石・結晶', basePrice: 20000, purchaseDM: { As: 2, De: 1, Ic: 1 }, saleDM: { In: 3, Ri: 2 }, availability: ['As', 'De', 'Ic'], stockFormula: "1D*5" },
-    { id: '32', name: 'サイバネティクス', basePrice: 250000, purchaseDM: { Ht: 1 }, saleDM: { As: 1, Ic: 1, Ri: 2 }, availability: ['Ht'], stockFormula: "1D" },
-    { id: '33', name: '生体動物', basePrice: 10000, purchaseDM: { Ag: 2 }, saleDM: { Lo: 3 }, availability: ['Ag', 'Ga'], stockFormula: "1D*10" },
-    { id: '34', name: '高級消耗品', basePrice: 20000, purchaseDM: { Ag: 2, Wa: 1 }, saleDM: { Ri: 2, Hi: 2 }, availability: ['Ag', 'Ga', 'Wa'], stockFormula: "1D*10" },
-    { id: '35', name: '高級品', basePrice: 200000, purchaseDM: { Hi: 1 }, saleDM: { Ri: 4 }, availability: ['Hi'], stockFormula: "1D" },
-    { id: '36', name: '医療用品', basePrice: 50000, purchaseDM: { Ht: 2 }, saleDM: { In: 2, Po: 1, Ri: 1 }, availability: ['Ht', 'Hi'], stockFormula: "1D*5" },
-    { id: '42', name: '医薬品', basePrice: 100000, purchaseDM: { As: 2, Hi: 1 }, saleDM: { Ri: 2, Lt: 1 }, availability: ['As', 'De', 'Hi', 'Wa'], stockFormula: "1D" },
-    { id: '43', name: 'ポリマー', basePrice: 7000, purchaseDM: { In: 1 }, saleDM: { Ri: 2, Ni: 1 }, availability: ['In'], stockFormula: "1D*10" },
-    { id: '44', name: '貴金属', basePrice: 50000, purchaseDM: { As: 3, De: 1, Ic: 2 }, saleDM: { Ri: 3, In: 2, Ht: 1 }, availability: ['As', 'De', 'Ic', 'Fl'], stockFormula: "1D" },
-    { id: '45', name: '放射性物質', basePrice: 1000000, purchaseDM: { As: 2, Lo: 2 }, saleDM: { In: 3, Ht: 1, Ni: -2, Ag: -3 }, availability: ['As', 'De', 'Lo'], stockFormula: "1D" },
-    { id: '46', name: 'ロボット', basePrice: 400000, purchaseDM: { In: 1 }, saleDM: { Ag: 2, Ht: 1 }, availability: ['In'], stockFormula: "1D*5" },
-    { id: '51', name: '香辛料', basePrice: 6000, purchaseDM: { De: 2 }, saleDM: { Hi: 2, Ri: 3, Po: 3 }, availability: ['Ga', 'De', 'Wa'], stockFormula: "1D*10" },
-    { id: '52', name: '繊維製品', basePrice: 3000, purchaseDM: { Ag: 7 }, saleDM: { Hi: 3, Na: 2 }, availability: ['Ag', 'Ni'], stockFormula: "1D*20" },
-    { id: '53', name: '希少鉱石', basePrice: 5000, purchaseDM: { As: 4 }, saleDM: { In: 3, Ni: 1 }, availability: ['As', 'Ic'], stockFormula: "1D*20" },
-    { id: '54', name: '希少原材料', basePrice: 20000, purchaseDM: { Ag: 2, Wa: 1 }, saleDM: { In: 2, Ht: 1 }, availability: ['Ag', 'De', 'Wa'], stockFormula: "1D*10" },
-    { id: '55', name: '木材', basePrice: 1000, purchaseDM: { Ag: 6 }, saleDM: { Ri: 2, In: 1 }, availability: ['Ag', 'Ga'], stockFormula: "1D*20" },
-    { id: '56', name: '車両', basePrice: 15000, purchaseDM: { In: 2, Ht: 1 }, saleDM: { Ni: 2, Hi: 1 }, availability: ['In', 'Ht'], stockFormula: "1D*10" }
+    { id: '11', name_jp: '一般電子機器', name_en: 'Common Electronics', basePrice: 20000, purchaseDM: { In: 2, Ht: 3 }, saleDM: { Ni: 1, Ri: 1, As: 1 }, availability: ['All'], stockFormula: "2D*10" },
+    { id: '12', name_jp: '一般工業製品', name_en: 'Common Industrial Goods', basePrice: 10000, purchaseDM: { Na: 2, In: 5 }, saleDM: { Ni: 3, Ag: 2 }, availability: ['All'], stockFormula: "2D*10" },
+    { id: '13', name_jp: '一般加工品', name_en: 'Common Manufactured Goods', basePrice: 20000, purchaseDM: { Na: 2, In: 5 }, saleDM: { Ni: 3, Hi: 2 }, availability: ['All'], stockFormula: "2D*10" },
+    { id: '14', name_jp: '一般原材料', name_en: 'Common Raw Materials', basePrice: 5000, purchaseDM: { Ag: 3, Ga: 2 }, saleDM: { In: 2, Po: 2 }, availability: ['All'], stockFormula: "2D*20" },
+    { id: '15', name_jp: '一般消耗品', name_en: 'Common Consumables', basePrice: 500, purchaseDM: { Ag: 3, Wa: 2, Ga: 1, As: -4 }, saleDM: { As: 1, Fl: 1, Ic: 1, Hi: 1 }, availability: ['All'], stockFormula: "2D*20" },
+    { id: '16', name_jp: '一般鉱石', name_en: 'Common Ore', basePrice: 1000, purchaseDM: { As: 4 }, saleDM: { In: 3, Ni: 1 }, availability: ['All'], stockFormula: "2D*20" },
+    { id: '21', name_jp: '先進電子機器', name_en: 'Advanced Electronics', basePrice: 100000, purchaseDM: { In: 2, Ht: 3 }, saleDM: { Ni: 1, Ri: 2, As: 3 }, availability: ['In', 'Ht'], stockFormula: "1D*5" },
+    { id: '22', name_jp: '先進機械部品', name_en: 'Advanced Machine Parts', basePrice: 75000, purchaseDM: { In: 2, Ht: 1 }, saleDM: { As: 2, Ni: 1 }, availability: ['In', 'Ht'], stockFormula: "1D*5" },
+    { id: '23', name_jp: '先進加工品', name_en: 'Advanced Manufactured Goods', basePrice: 100000, purchaseDM: { In: 1 }, saleDM: { Hi: 1, Ri: 2 }, availability: ['In', 'Ht'], stockFormula: "1D*5" },
+    { id: '24', name_jp: '先進兵器', name_en: 'Advanced Weapons', basePrice: 150000, purchaseDM: { Ht: 2 }, saleDM: { Po: 1, Amber: 2, Red: 4 }, availability: ['In', 'Ht'], stockFormula: "1D*5" },
+    { id: '25', name_jp: '先進車両', name_en: 'Advanced Vehicles', basePrice: 180000, purchaseDM: { Ht: 2 }, saleDM: { As: 2, Ri: 2 }, availability: ['In', 'Ht'], stockFormula: "1D*5" },
+    { id: '26', name_jp: '生化学製品', name_en: 'Biochemicals', basePrice: 50000, purchaseDM: { Ag: 1, Wa: 2 }, saleDM: { In: 2 }, availability: ['Ag', 'Wa'], stockFormula: "1D*5" },
+    { id: '31', name_jp: '貴石・結晶', name_en: 'Crystals & Gems', basePrice: 20000, purchaseDM: { As: 2, De: 1, Ic: 1 }, saleDM: { In: 3, Ri: 2 }, availability: ['As', 'De', 'Ic'], stockFormula: "1D*5" },
+    { id: '32', name_jp: 'サイバネティクス', name_en: 'Cybernetics', basePrice: 250000, purchaseDM: { Ht: 1 }, saleDM: { As: 1, Ic: 1, Ri: 2 }, availability: ['Ht'], stockFormula: "1D" },
+    { id: '33', name_jp: '生体動物', name_en: 'Live Animals', basePrice: 10000, purchaseDM: { Ag: 2 }, saleDM: { Lo: 3 }, availability: ['Ag', 'Ga'], stockFormula: "1D*10" },
+    { id: '34', name_jp: '高級消耗品', name_en: 'Luxury Consumables', basePrice: 20000, purchaseDM: { Ag: 2, Wa: 1 }, saleDM: { Ri: 2, Hi: 2 }, availability: ['Ag', 'Ga', 'Wa'], stockFormula: "1D*10" },
+    { id: '35', name_jp: '高級品', name_en: 'Luxury Goods', basePrice: 200000, purchaseDM: { Hi: 1 }, saleDM: { Ri: 4 }, availability: ['Hi'], stockFormula: "1D" },
+    { id: '36', name_jp: '医療用品', name_en: 'Medical Supplies', basePrice: 50000, purchaseDM: { Ht: 2 }, saleDM: { In: 2, Po: 1, Ri: 1 }, availability: ['Ht', 'Hi'], stockFormula: "1D*5" },
+    { id: '42', name_jp: '医薬品', name_en: 'Pharmaceuticals', basePrice: 100000, purchaseDM: { As: 2, Hi: 1 }, saleDM: { Ri: 2, Lt: 1 }, availability: ['As', 'De', 'Hi', 'Wa'], stockFormula: "1D" },
+    { id: '43', name_jp: 'ポリマー', name_en: 'Polymers', basePrice: 7000, purchaseDM: { In: 1 }, saleDM: { Ri: 2, Ni: 1 }, availability: ['In'], stockFormula: "1D*10" },
+    { id: '44', name_jp: '貴金属', name_en: 'Precious Metals', basePrice: 50000, purchaseDM: { As: 3, De: 1, Ic: 2 }, saleDM: { Ri: 3, In: 2, Ht: 1 }, availability: ['As', 'De', 'Ic', 'Fl'], stockFormula: "1D" },
+    { id: '45', name_jp: '放射性物質', name_en: 'Radioactives', basePrice: 1000000, purchaseDM: { As: 2, Lo: 2 }, saleDM: { In: 3, Ht: 1, Ni: -2, Ag: -3 }, availability: ['As', 'De', 'Lo'], stockFormula: "1D" },
+    { id: '46', name_jp: 'ロボット', name_en: 'Robots', basePrice: 400000, purchaseDM: { In: 1 }, saleDM: { Ag: 2, Ht: 1 }, availability: ['In'], stockFormula: "1D*5" },
+    { id: '51', name_jp: '香辛料', name_en: 'Spices', basePrice: 6000, purchaseDM: { De: 2 }, saleDM: { Hi: 2, Ri: 3, Po: 3 }, availability: ['Ga', 'De', 'Wa'], stockFormula: "1D*10" },
+    { id: '52', name_jp: '繊維製品', name_en: 'Textiles', basePrice: 3000, purchaseDM: { Ag: 7 }, saleDM: { Hi: 3, Na: 2 }, availability: ['Ag', 'Ni'], stockFormula: "1D*20" },
+    { id: '53', name_jp: '希少鉱石', name_en: 'Uncommon Ore', basePrice: 5000, purchaseDM: { As: 4 }, saleDM: { In: 3, Ni: 1 }, availability: ['As', 'Ic'], stockFormula: "1D*20" },
+    { id: '54', name_jp: '希少原材料', name_en: 'Uncommon Raw Materials', basePrice: 20000, purchaseDM: { Ag: 2, Wa: 1 }, saleDM: { In: 2, Ht: 1 }, availability: ['Ag', 'De', 'Wa'], stockFormula: "1D*10" },
+    { id: '55', name_jp: '木材', name_en: 'Wood', basePrice: 1000, purchaseDM: { Ag: 6 }, saleDM: { Ri: 2, In: 1 }, availability: ['Ag', 'Ga'], stockFormula: "1D*20" },
+    { id: '56', name_jp: '車両', name_en: 'Vehicles', basePrice: 15000, purchaseDM: { In: 2, Ht: 1 }, saleDM: { Ni: 2, Hi: 1 }, availability: ['In', 'Ht'], stockFormula: "1D*10" }
 ];
+
+/**
+ * 貿易コードのローカライズ情報
+ */
+export const TRADE_CODES_INFO = {
+    Ag: { name_en: 'Agricultural', name_jp: '農業', desc_en: 'Atm 4-9, Hyd 5-7, Pop 5-7', desc_jp: '大気 4-9, 水圏 5-7, 人口 5-7' },
+    As: { name_en: 'Asteroid', name_jp: '小惑星', desc_en: 'Size 0, Atm 0, Hyd 0', desc_jp: '直径 0, 大気 0, 水圏 0' },
+    Ba: { name_en: 'Barren', name_jp: '不毛', desc_en: 'Pop 0, Gov 0, Law 0', desc_jp: '人口 0, 政府 0, 法律 0' },
+    De: { name_en: 'Desert', name_jp: '砂漠', desc_en: 'Atm 2-9, Hyd 0', desc_jp: '大気 2-9, 水圏 0' },
+    Fl: { name_en: 'Fluid Oceans', name_jp: '流体海', desc_en: 'Atm 10+, Hyd 1+', desc_jp: '大気 10+, 水圏 1+' },
+    Ga: { name_en: 'Garden', name_jp: '楽園', desc_en: 'Size 6-8, Atm 5,6,8, Hyd 5-7', desc_jp: '直径 6-8, 大気 5,6,8, 水圏 5-7' },
+    Hi: { name_en: 'High Population', name_jp: '高人口', desc_en: 'Pop 9+', desc_jp: '人口 9+' },
+    Ht: { name_en: 'High Tech', name_jp: 'ハイテク', desc_en: 'TL 12+', desc_jp: 'TL 12+' },
+    Ic: { name_en: 'Ice-Capped', name_jp: '氷結', desc_en: 'Atm 0-1, Hyd 1+', desc_jp: '大気 0-1, 水圏 1+' },
+    In: { name_en: 'Industrial', name_jp: '工業', desc_en: 'Atm 0-2, 4, 7, 9-12, Pop 9+', desc_jp: '大気 0-2, 4, 7, 9-12, 人口 9+' },
+    Lo: { name_en: 'Low Population', name_jp: '低人口', desc_en: 'Pop 1-3', desc_jp: '人口 1-3' },
+    Lt: { name_en: 'Low Tech', name_jp: 'ローテク', desc_en: 'TL <= 5', desc_jp: 'TL 5以下' },
+    Na: { name_en: 'Non-Agricultural', name_jp: '非農業', desc_en: 'Atm 0-3, Hyd 0-3, Pop 6+', desc_jp: '大気 0-3, 水圏 0-3, 人口 6+' },
+    Ni: { name_en: 'Non-Industrial', name_jp: '非工業', desc_en: 'Pop 4-6', desc_jp: '人口 4-6' },
+    Po: { name_en: 'Poor', name_jp: '貧困', desc_en: 'Atm 2-5, Hyd 0-3', desc_jp: '大気 2-5, 水圏 0-3' },
+    Ri: { name_en: 'Rich', name_jp: '富裕', desc_en: 'Atm 6,8, Pop 6-8, Gov 4-9', desc_jp: '大気 6,8, 人口 6-8, 政府 4-9' },
+    Va: { name_en: 'Vacuum', name_jp: '真空', desc_en: 'Atm 0', desc_jp: '大気 0' },
+    Wa: { name_en: 'Water World', name_jp: '海洋', desc_en: 'Hyd 10+', desc_jp: '水圏 10+' },
+};
+
+export const PASSENGER_TYPES_INFO = {
+    high: { name_en: 'High', name_jp: 'High / 特等' },
+    middle: { name_en: 'Middle', name_jp: 'Middle / 1等' },
+    basic: { name_en: 'Basic', name_jp: 'Basic / 2等' },
+    low: { name_en: 'Low', name_jp: 'Low / 冷凍' },
+};
+
 
 /**
  * 六面体ダイス (D6) を振る汎用関数
@@ -157,7 +189,8 @@ export function analyzeTradeRoute(origin, destination, brokerLevel = 0) {
         const stockTons = calculateStock(item.stockFormula);
 
         return {
-            item: item.name,
+            item_en: item.name_en,
+            item_jp: item.name_jp,
             purchase_dm: pDM,
             sale_dm: sDM,
             est_purchase_price: estPurchasePrice,

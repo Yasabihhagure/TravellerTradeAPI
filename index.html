@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Traveller Trade API (TTA)</title>
-  <meta name="description" content="TRPG Traveller (Update 2022) 準拠の星間貿易計算ツール。AIエージェントによる自動ルート分析に対応。">
+  <meta name="description"
+    content="TRPG Traveller (Update 2022) compliant interstellar trade calculation tool. Supports automated route analysis by AI agents.">
   <!-- Google Fonts: Inter and Fira Code for a high-tech vibe -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,11 +17,22 @@
 </head>
 
 <body>
-  <header>
-    <h1>Traveller Trade API</h1>
-    <p class="subtitle">AI-Friendly Interstellar Trade Analysis Engine <span class="version-badge"
-        style="font-size: 0.8rem; background: rgba(255,255,255,0.1); padding: 0.1rem 0.4rem; border-radius: 4px; margin-left: 0.5rem;">v1.0.0</span>
-    </p>
+  <header style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+    <div>
+      <h1>Traveller Trade API</h1>
+      <p class="subtitle">AI-Friendly Interstellar Trade Analysis Engine <span class="version-badge"
+          style="font-size: 0.8rem; background: rgba(255,255,255,0.1); padding: 0.1rem 0.4rem; border-radius: 4px; margin-left: 0.5rem;">v1.1.0</span>
+      </p>
+    </div>
+    <div style="margin-top: 1rem;">
+      <label for="lang-select"
+        style="font-size: 0.9rem; margin-right: 0.5rem; color: var(--text-color);">Language:</label>
+      <select id="lang-select"
+        style="padding: 0.3rem; background: var(--card-bg); color: var(--text-color); border: 1px solid var(--border-color); border-radius: 4px; font-family: 'Inter', sans-serif;">
+        <option value="en">English</option>
+        <option value="ja">日本語</option>
+      </select>
+    </div>
   </header>
 
   <main>
@@ -49,15 +61,17 @@
     <section id="results-area">
       <!-- Results will be injected here by main.js -->
       <div class="card" id="welcome-message">
-        <p>セクター名と座標を入力して、「Analyze Route」をクリックしてください。AIエージェントはこのページに直接アクセスして貿易ルートを提案できます。</p>
+        <p>Please enter the sector name and coordinates, then click "Analyze Route". AI agents can directly access this
+          page to propose trade routes.</p>
       </div>
     </section>
 
     <!-- The AI Bridge: JSON metadata for AI parsing -->
     <script id="tta-data" type="application/json">
     {
-      "api_version": "1.0.0",
+      "api_version": "1.1.0",
       "status": "idle",
+      "language": "en",
       "route_analysis": null
     }
     </script>
