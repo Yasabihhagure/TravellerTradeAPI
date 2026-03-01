@@ -15,11 +15,79 @@ const elements = {
   langSelect: document.getElementById('lang-select')
 };
 
+// UI静的要素の取得
+const uiElements = {
+  labelSector: document.querySelector('label[for="sector"]'),
+  labelOrigin: document.querySelector('label[for="origin-hex"]'),
+  labelDest: document.querySelector('label[for="dest-hex"]'),
+  labelBroker: document.querySelector('label[for="broker"]'),
+  searchBtnText: elements.searchBtn,
+  footerWelcome: document.querySelector('footer p:nth-child(2)'),
+};
+
+const UI_TEXTS = {
+  en: {
+    sector: "Sector",
+    origin: "Origin Hex",
+    dest: "Destination Hex",
+    broker: "Broker Level",
+    analyze: "Analyze Route",
+    footer: "This tool is designed for AI interaction. Human users are also welcome.",
+    alert: "Please fill in Sector, Origin, and Destination.",
+    analyzing: "Analyzing trade route...",
+    welcome: "Please enter the sector name and coordinates, then click \"Analyze Route\". AI agents can directly access this page to propose trade routes.",
+    failTitle: "Analysis Failed",
+    portTraffic: "Port Traffic & Opportunities",
+    passengers: "Passengers:",
+    freightLots: "Freight Lots:",
+    mailDelivery: "Mail Delivery:",
+    mailAvail: "Available (Cr 25,000)",
+    mailNone: "None",
+    tblGood: "Trade Good",
+    tblStock: "Stock (Tons)",
+    tblProfit: "Est. Profit",
+    noProfit: "No profitable goods found for this route.",
+  },
+  ja: {
+    sector: "セクター",
+    origin: "出発座標 (Hex)",
+    dest: "目的座標 (Hex)",
+    broker: "ブローカー技能",
+    analyze: "ルートを分析",
+    footer: "このツールはAIエージェントの処理向けに設計されています。人間の利用も歓迎します。",
+    alert: "セクター、出発地、目的地を入力してください。",
+    analyzing: "ルートを分析中...",
+    welcome: "セクター名と座標を入力して、「ルートを分析」をクリックしてください。AIエージェントはこのページに直接アクセスして貿易ルートを提案できます。",
+    failTitle: "分析失敗",
+    portTraffic: "港の交通量と機会",
+    passengers: "乗客:",
+    freightLots: "貨物ロット:",
+    mailDelivery: "郵便配達:",
+    mailAvail: "あり (Cr 25,000)",
+    mailNone: "なし",
+    tblGood: "貿易品",
+    tblStock: "在庫 (トン)",
+    tblProfit: "予測利益",
+    noProfit: "このルートで利益が出る商品は見つかりませんでした。",
+  }
+};
+
 let currentLang = elements.langSelect.value || 'en';
+
+function updateStaticUI() {
+  const t = UI_TEXTS[currentLang];
+  if (uiElements.labelSector) uiElements.labelSector.textContent = t.sector;
+  if (uiElements.labelOrigin) uiElements.labelOrigin.textContent = t.origin;
+  if (uiElements.labelDest) uiElements.labelDest.textContent = t.dest;
+  if (uiElements.labelBroker) uiElements.labelBroker.textContent = t.broker;
+  if (uiElements.searchBtnText) uiElements.searchBtnText.textContent = t.analyze;
+  if (uiElements.footerWelcome) uiElements.footerWelcome.textContent = t.footer;
+}
 
 elements.langSelect.addEventListener('change', (e) => {
   currentLang = e.target.value;
-  // Only re-run if we have valid inputs
+  updateStaticUI();
+
   if (elements.sector.value && elements.origin.value && elements.dest.value) {
     performAnalysis();
   } else {
@@ -28,53 +96,41 @@ elements.langSelect.addEventListener('change', (e) => {
 });
 
 function updateWelcomeMessage() {
-  if (currentLang === 'ja') {
-    elements.resultsArea.innerHTML = `
-          <div class="card" id="welcome-message">
-            <p>セクター名と座標を入力して、「Analyze Route」をクリックしてください。AIエージェントはこのページに直接アクセスして貿易ルートを提案できます。</p>
-          </div>
-        `;
-  } else {
-    elements.resultsArea.innerHTML = `
-          <div class="card" id="welcome-message">
-            <p>Please enter the sector name and coordinates, then click "Analyze Route". AI agents can directly access this page to propose trade routes.</p>
-          </div>
-        `;
-  }
+  const t = UI_TEXTS[currentLang];
+  elements.resultsArea.innerHTML = `
+    <div class="card" id="welcome-message">
+      <p>${t.welcome}</p>
+    </div>
+  `;
 }
 
 /**
  * ルート分析の実行
  */
 async function performAnalysis() {
+  const t = UI_TEXTS[currentLang];
   const sector = elements.sector.value.trim();
   const originHex = elements.origin.value.trim();
   const destHex = elements.dest.value.trim();
   const broker = parseInt(elements.broker.value) || 0;
 
   if (!sector || !originHex || !destHex) {
-    alert(currentLang === 'ja' ? 'セクター、出発地、目的地を入力してください。' : 'Please fill in Sector, Origin, and Destination.');
+    alert(t.alert);
     return;
   }
 
-  // UIをローディング表示に
-  elements.resultsArea.innerHTML = `<div class="loading-spinner">${currentLang === 'ja' ? 'ルートを分析中...' : 'Analyzing trade route...'}</div>`;
+  elements.resultsArea.innerHTML = `<div class="loading-spinner">${t.analyzing}</div>`;
   elements.searchBtn.disabled = true;
 
   try {
-    // 1. データ取得
     const [originData, destData] = await Promise.all([
       getWorldData(sector, originHex),
       getWorldData(sector, destHex)
     ]);
 
-    // 2. 分析実行
     const analysis = analyzeTradeRoute(originData, destData, broker);
-
-    // 3. UIの更新
     renderResults(analysis);
 
-    // 4. AI Bridge (JSON) の更新
     const localizedRecommendations = analysis.recommendations.map(r => ({
       item: r['item_' + currentLang],
       purchase_dm: r.purchase_dm,
@@ -100,13 +156,12 @@ async function performAnalysis() {
       }
     }, null, 2);
 
-    // 5. URLハッシュの更新（共有用）
     window.location.hash = `/trade/${sector}/${originHex}/${destHex}?broker=${broker}&lang=${currentLang}`;
 
   } catch (error) {
     elements.resultsArea.innerHTML = `
       <div class="card" style="border-color: #e74c3c;">
-        <h3 style="color: #e74c3c;">${currentLang === 'ja' ? '分析失敗' : 'Analysis Failed'}</h3>
+        <h3 style="color: #e74c3c;">${t.failTitle}</h3>
         <p>${error.message}</p>
       </div>
     `;
@@ -120,7 +175,7 @@ async function performAnalysis() {
  */
 function createTradeCodeBadge(c) {
   const info = TRADE_CODES_INFO[c];
-  const title = info ? `${info['name_' + currentLang]}: ${info['desc_' + currentLang]}` : c;
+  const title = info ? `${info['name_' + currentLang]}: ${info['desc_' + currentLang]}` : "";
   return `<span class="code-badge" title="${title}">${c}</span>`;
 }
 
@@ -128,6 +183,7 @@ function createTradeCodeBadge(c) {
  * 分析結果のレンダリング
  */
 function renderResults(data) {
+  const t = UI_TEXTS[currentLang];
   const { origin, destination, recommendations, traffic } = data;
 
   let html = `
@@ -149,17 +205,17 @@ function renderResults(data) {
       </div>
       
       <div class="traffic-info" style="margin: 1rem 0; padding: 1rem; background: rgba(0,0,0,0.2); border-radius: 8px;">
-        <h4 style="margin-top: 0; color: var(--accent-color);">${currentLang === 'ja' ? '港の交通量と機会' : 'Port Traffic & Opportunities'}</h4>
+        <h4 style="margin-top: 0; color: var(--accent-color);">${t.portTraffic}</h4>
         <div style="display: flex; gap: 1rem; font-size: 0.9rem; flex-wrap: wrap; align-items: center;">
             <div style="display: flex; gap: 0.5rem; align-items: center;">
-                <strong>${currentLang === 'ja' ? '乗客:' : 'Passengers:'}</strong> 
-                <span class="code-badge" title="${PASSENGER_TYPES_INFO.high['name_' + currentLang]}">High: ${traffic.passengers.high}</span>
-                <span class="code-badge" title="${PASSENGER_TYPES_INFO.middle['name_' + currentLang]}">Mid: ${traffic.passengers.middle}</span>
-                <span class="code-badge" title="${PASSENGER_TYPES_INFO.basic['name_' + currentLang]}">Basic: ${traffic.passengers.basic}</span>
-                <span class="code-badge" title="${PASSENGER_TYPES_INFO.low['name_' + currentLang]}">Low: ${traffic.passengers.low}</span>
+                <strong>${t.passengers}</strong> 
+                <span class="code-badge">${PASSENGER_TYPES_INFO.high['name_' + currentLang]}: ${traffic.passengers.high}</span>
+                <span class="code-badge">${PASSENGER_TYPES_INFO.middle['name_' + currentLang]}: ${traffic.passengers.middle}</span>
+                <span class="code-badge">${PASSENGER_TYPES_INFO.basic['name_' + currentLang]}: ${traffic.passengers.basic}</span>
+                <span class="code-badge">${PASSENGER_TYPES_INFO.low['name_' + currentLang]}: ${traffic.passengers.low}</span>
             </div>
-            <div><strong>${currentLang === 'ja' ? '貨物ロット:' : 'Freight Lots:'}</strong> ${traffic.freight_lots}</div>
-            <div><strong>${currentLang === 'ja' ? '郵便配達:' : 'Mail Delivery:'}</strong> ${traffic.has_mail ? (currentLang === 'ja' ? '<span style="color: #2ecc71;">あり (Cr 25,000)</span>' : '<span style="color: #2ecc71;">Available (Cr 25,000)</span>') : (currentLang === 'ja' ? 'なし' : 'None')}</div>
+            <div><strong>${t.freightLots}</strong> ${traffic.freight_lots}</div>
+            <div><strong>${t.mailDelivery}</strong> ${traffic.has_mail ? `<span style="color: #2ecc71;">${t.mailAvail}</span>` : t.mailNone}</div>
         </div>
       </div>
       
@@ -167,11 +223,11 @@ function renderResults(data) {
         <table>
           <thead>
             <tr>
-              <th>${currentLang === 'ja' ? '貿易品' : 'Trade Good'}</th>
-              <th>${currentLang === 'ja' ? '在庫 (トン)' : 'Stock (Tons)'}</th>
+              <th>${t.tblGood}</th>
+              <th>${t.tblStock}</th>
               <th>Purchase DM</th>
               <th>Sale DM</th>
-              <th>${currentLang === 'ja' ? '予測利益' : 'Est. Profit'}</th>
+              <th>${t.tblProfit}</th>
               <th>Margin</th>
             </tr>
           </thead>
@@ -191,7 +247,7 @@ function renderResults(data) {
           </tbody>
         </table>
       </div>
-      ${recommendations.length === 0 ? `<p style="text-align: center; margin-top: 1rem;">${currentLang === 'ja' ? 'このルートで利益が出る商品は見つかりませんでした。' : 'No profitable goods found for this route.'}</p>` : ''}
+      ${recommendations.length === 0 ? `<p style="text-align: center; margin-top: 1rem;">${t.noProfit}</p>` : ''}
     </div>
   `;
 
@@ -220,11 +276,13 @@ function handleRouting() {
         if (urlLang === 'ja' || urlLang === 'en') {
           currentLang = urlLang;
           elements.langSelect.value = currentLang;
+          updateStaticUI();
         }
       }
       performAnalysis();
     }
   } else {
+    updateStaticUI();
     updateWelcomeMessage();
   }
 }
