@@ -52,7 +52,7 @@ async function main() {
 
         // AI抽出用のJSONを構成
         const resultJson = {
-            api_version: "1.1.0",
+            api_version: "1.1.1",
             status: "ready",
             language: lang,
             route_analysis: {

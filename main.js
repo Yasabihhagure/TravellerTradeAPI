@@ -145,7 +145,7 @@ async function performAnalysis() {
     }));
 
     elements.ttaData.textContent = JSON.stringify({
-      api_version: "1.1.0",
+      api_version: "1.1.1",
       status: "ready",
       language: currentLang,
       route_analysis: {

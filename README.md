@@ -46,7 +46,7 @@ JavaScriptを実行可能な実行環境（Antigravityの browser_subagent 等�
 ```html
 <script id="tta-data" type="application/json">
 {
-  "api_version": "1.1.0",
+  "api_version": "1.1.1",
   "status": "ready",
   "language": "en",
   "route_analysis": {
@@ -182,7 +182,7 @@ When the page is loaded in a browser, trade calculation results are embedded in 
 ```html
 <script id="tta-data" type="application/json">
 {
-  "api_version": "1.1.0",
+  "api_version": "1.1.1",
   "status": "ready",
   "language": "en",
   "route_analysis": {
