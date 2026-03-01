@@ -42,7 +42,21 @@ AI は以下の URL 形式に直接アクセスすることで、特定のルー
 </script>
 ```
 
-### 3. [重要] 出発地周辺の目的地候補 (Hex) を見つける方法
+### 3. [代替手段] ローカルCLIツールを利用した直接計算
+Web Fetchやブラウジング機能がJavaScriptを実行できず、SPAから動的にデータを抽出できない環境のAIエージェント（Claude Code 等）は、本リポジトリに同梱されている `cli.js` を直接実行してJSON出力を得ることができます。
+
+**実行形式:**
+```bash
+node cli.js "<Sector>" <OriginHex> <DestinationHex> [BrokerSkillLevel]
+```
+
+**実行例:**
+```bash
+node cli.js "Spinward Marches" 2124 2125 1
+```
+実行すると、Web版と全く同じ形式のJSONデータが標準出力 (stdout) に直接表示されます。
+
+### 4. [重要] 出発地周辺の目的地候補 (Hex) を見つける方法
 
 ユーザーから単に「Lunion (2124) からの交易」とだけ指定され、目的地の座標 (Hex) が不明な場合、AI は **TravellerMap API の Jump 検索** を使用して n パーセク以内の星系一覧を自律的に取得してください。
 
