@@ -253,3 +253,12 @@ Or, an image centered on specific coordinates:
 > * **社会身分(SOC)ボーナス**: トラベラーの中で最も高いSOCの修正値 (+SOC DM)
 > 
 > *(Source: Traveller Core Rulebook Update 2022)*
+> 
+> ### 郵便コンテナの発生数と受注ルール (Mail Containers & Freight Terms)
+> > 輸送契約を獲得した場合、**1D（1〜6）個**の郵便コンテナが発生します。
+> > 郵便コンテナ1つにつき、**5トン**の貨物スペースを消費します。（最大で30トンのスペースが必要になる可能性があります）
+> > 
+> > **【重要: All or Nothingの原則】**
+> > トラベラーは、発生した郵便コンテナを **「すべて運ぶ」か「1つも運ばない（引き受けない）」か** のどちらかを選ばなければなりません。一部のコンテナだけを選んで運ぶことはできません。
+> > 
+> > *(Source: Traveller Core Rulebook Update 2022)*

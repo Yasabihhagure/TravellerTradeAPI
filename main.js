@@ -43,9 +43,10 @@ const UI_TEXTS = {
     portTraffic: "Port Traffic & Opportunities",
     passengers: "Passengers:",
     freightLots: "Freight Lots:",
-    mailDelivery: "Mail Delivery:",
-    mailAvail: "Available (Cr 25,000)",
+    mailAvail: "Available",
+    mailAvailDetail: "({0} Containers / {1}t / Cr {2})",
     mailNone: "None",
+    mailTooltip: "Mail Delivery: All or Nothing. Either take all generated containers or none.",
     tblGood: "Trade Good",
     tblStock: "Stock (Tons)",
     tblProfit: "Est. Profit",
@@ -66,9 +67,10 @@ const UI_TEXTS = {
     portTraffic: "港の交通量と機会",
     passengers: "乗客:",
     freightLots: "貨物ロット:",
-    mailDelivery: "郵便配達:",
-    mailAvail: "あり (Cr 25,000)",
+    mailAvail: "あり",
+    mailAvailDetail: "({0}個 / {1}トン / Cr {2})",
     mailNone: "なし",
+    mailTooltip: "郵便配達: 全て運ぶか、1つも運ばないかを選択する必要があります（一部輸送不可）",
     tblGood: "貿易品",
     tblStock: "在庫 (トン)",
     tblProfit: "予測利益",
@@ -221,7 +223,12 @@ function renderResults(data) {
                 <span class="code-badge">${PASSENGER_TYPES_INFO.low['name_' + currentLang]}: ${traffic.passengers.low}</span>
             </div>
             <div><strong>${t.freightLots}</strong> ${traffic.freight_lots}</div>
-            <div><strong>${t.mailDelivery}</strong> ${traffic.has_mail ? `<span style="color: #2ecc71;">${t.mailAvail}</span>` : t.mailNone}</div>
+            <div title="${t.mailTooltip}">
+                <strong>${t.mailDelivery}</strong> 
+                ${traffic.has_mail
+      ? `<span style="color: #2ecc71;">${t.mailAvail} ${t.mailAvailDetail.replace('{0}', traffic.mail_containers).replace('{1}', traffic.mail_containers * 5).replace('{2}', (25000 * traffic.mail_containers).toLocaleString())}</span>`
+      : t.mailNone}
+            </div>
         </div>
       </div>
       

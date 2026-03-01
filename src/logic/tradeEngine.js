@@ -363,11 +363,13 @@ export function calculateTraffic(world, mailBonus = 0) {
     const totalMailDM = baseMailDM + mailBonus;
     const mailRoll = rollDice(2) + totalMailDM;
     const hasMail = mailRoll >= 12;
+    const mailContainers = hasMail ? rollDice(1) : 0;
 
     return {
         passengers: passengers,
         freight_lots: freightLots,
         has_mail: hasMail,
+        mail_containers: mailContainers,
         logic: `Traffic DM: ${trafficDM}, Traffic rolls (H/M/B/L/F): ${highRoll}/${middleRoll}/${basicRoll}/${lowRoll}/${freightRoll} | Mail roll: 2D+${totalMailDM} = ${mailRoll}`
     };
 }
