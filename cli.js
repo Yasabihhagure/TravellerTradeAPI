@@ -8,7 +8,7 @@ import { analyzeTradeRoute } from './src/logic/tradeEngine.js';
  * node cli.js <Sector> <OriginHex> <DestinationHex> [BrokerLevel]
  * 
  * 例:
- * node cli.js "Spinward Marches" 2124 2125 1
+ * node cli.js "Spinward-Marches" 2124 2125 1
  */
 
 async function main() {
@@ -16,7 +16,7 @@ async function main() {
 
     if (args.length < 3) {
         console.error("Usage: node cli.js <Sector> <OriginHex> <DestinationHex> [BrokerLevel]");
-        console.error("Example: node cli.js \"Spinward Marches\" 2124 2125 1");
+        console.error("Example: node cli.js \"Spinward-Marches\" 2124 2125 1");
         process.exit(1);
     }
 

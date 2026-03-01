@@ -98,8 +98,14 @@ function renderResults(data) {
       
       <div class="traffic-info" style="margin: 1rem 0; padding: 1rem; background: rgba(0,0,0,0.2); border-radius: 8px;">
         <h4 style="margin-top: 0; color: var(--accent-color);">Port Traffic & Opportunities</h4>
-        <div style="display: flex; gap: 1rem; font-size: 0.9rem;">
-            <div><strong>Passengers:</strong> ${traffic.passengers}</div>
+        <div style="display: flex; gap: 1rem; font-size: 0.9rem; flex-wrap: wrap; align-items: center;">
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <strong>Passengers:</strong> 
+                <span class="code-badge" title="High / 特等">High: ${traffic.passengers.high}</span>
+                <span class="code-badge" title="Middle / 1等">Mid: ${traffic.passengers.middle}</span>
+                <span class="code-badge" title="Basic / 2等">Basic: ${traffic.passengers.basic}</span>
+                <span class="code-badge" title="Low / 冷凍">Low: ${traffic.passengers.low}</span>
+            </div>
             <div><strong>Freight Lots:</strong> ${traffic.freight_lots}</div>
             <div><strong>Mail Delivery:</strong> ${traffic.has_mail ? '<span style="color: #2ecc71;">Available (Cr 25,000)</span>' : 'None'}</div>
         </div>

@@ -180,15 +180,53 @@ export function analyzeTradeRoute(origin, destination, brokerLevel = 0) {
 }
 
 /**
+ * 旅客用ダイス数取得ヘルパー
+ */
+function getPassengerDice(trafficRoll) {
+    if (trafficRoll <= 1) return 0;
+    if (trafficRoll <= 3) return 1;
+    if (trafficRoll <= 5) return 2;
+    if (trafficRoll === 6) return 2;
+    if (trafficRoll <= 8) return 3;
+    if (trafficRoll <= 10) return 3;
+    if (trafficRoll === 11) return 4;
+    if (trafficRoll <= 13) return 4;
+    if (trafficRoll === 14) return 5;
+    if (trafficRoll === 15) return 5;
+    if (trafficRoll === 16) return 6;
+    if (trafficRoll === 17) return 7;
+    if (trafficRoll === 18) return 8;
+    if (trafficRoll === 19) return 9;
+    return 10;
+}
+
+/**
+ * 貨物用ダイス数取得ヘルパー
+ */
+function getFreightDice(trafficRoll) {
+    if (trafficRoll <= 1) return 0;
+    if (trafficRoll <= 3) return 1;
+    if (trafficRoll <= 5) return 2;
+    if (trafficRoll === 6) return 3;
+    if (trafficRoll <= 8) return 3;
+    if (trafficRoll <= 10) return 4;
+    if (trafficRoll === 11) return 4;
+    if (trafficRoll <= 13) return 5;
+    if (trafficRoll === 14) return 5;
+    if (trafficRoll === 15) return 6;
+    if (trafficRoll === 16) return 6;
+    if (trafficRoll === 17) return 7;
+    if (trafficRoll === 18) return 8;
+    if (trafficRoll === 19) return 9;
+    return 10;
+}
+
+/**
  * 星系の人口に基づく旅客・貨物の発生ダイス数を算出
  * @param {Object} world - 星系データ
  * @returns {Object} 旅客・郵便等の情報
  */
 export function calculateTraffic(world) {
-    // ※今回は基本ルールの簡略版として、UWPの人口桁からDMを擬似生成してダイスに加算します。
-    // 本来は人口やスターポートで細かく算出しますが、仕様の「基本表」に則り、
-    // ここでは (2D + Population - 5) などをベースにします（目安）
-
     // UWPから人口値 (1文字目: Starport, 2: Size, 3: Atm, 4: Hyd, 5: Pop)
     let popVal = 0;
     if (world.uwp && world.uwp.length >= 5) {
@@ -196,33 +234,29 @@ export function calculateTraffic(world) {
         popVal = parseInt(popChar, 16) || 0; // A=10, B=11...
     }
 
-    const trafficRoll = rollDice(2) + Math.max(0, popVal - 4);
+    const popDM = Math.max(0, popVal - 4);
 
-    let passengerDice = 0;
-    let freightDice = 0;
+    // それぞれの旅客クラスごとに独立して 2D + 共通DM + クラス固有DM を判定
+    // 固有DM: High(-4), Middle(0), Basic(0), Low(+1)
+    const highRoll = Math.max(0, rollDice(2) + popDM - 4);
+    const middleRoll = Math.max(0, rollDice(2) + popDM);
+    const basicRoll = Math.max(0, rollDice(2) + popDM);
+    const lowRoll = Math.max(0, rollDice(2) + popDM + 1);
 
-    if (trafficRoll <= 1) { passengerDice = 0; freightDice = 0; }
-    else if (trafficRoll <= 3) { passengerDice = 1; freightDice = 1; }
-    else if (trafficRoll <= 5) { passengerDice = 2; freightDice = 2; }
-    else if (trafficRoll === 6) { passengerDice = 2; freightDice = 3; }
-    else if (trafficRoll <= 8) { passengerDice = 3; freightDice = 3; }
-    else if (trafficRoll <= 10) { passengerDice = 3; freightDice = 4; }
-    else if (trafficRoll === 11) { passengerDice = 4; freightDice = 4; }
-    else if (trafficRoll <= 13) { passengerDice = 4; freightDice = 5; }
-    else if (trafficRoll === 14) { passengerDice = 5; freightDice = 5; }
-    else if (trafficRoll === 15) { passengerDice = 5; freightDice = 6; }
-    else if (trafficRoll === 16) { passengerDice = 6; freightDice = 6; }
-    else if (trafficRoll === 17) { passengerDice = 7; freightDice = 7; }
-    else if (trafficRoll === 18) { passengerDice = 8; freightDice = 8; }
-    else if (trafficRoll === 19) { passengerDice = 9; freightDice = 9; }
-    else { passengerDice = 10; freightDice = 10; }
+    // 貨物用 (共通ルール)
+    const freightRoll = Math.max(0, rollDice(2) + popDM);
 
-    const passengers = rollDice(passengerDice);
-    const freightLots = rollDice(freightDice);
+    const passengers = {
+        high: rollDice(getPassengerDice(highRoll)),
+        middle: rollDice(getPassengerDice(middleRoll)),
+        basic: rollDice(getPassengerDice(basicRoll)),
+        low: rollDice(getPassengerDice(lowRoll))
+    };
+
+    const freightLots = rollDice(getFreightDice(freightRoll));
 
     // 郵便表 (12以上で発生)
-    // 貨物が高ければ郵便も出やすい。今回は単純なDMとして freightDice * 2 を加算
-    const mailDM = Math.floor(freightDice / 2);
+    const mailDM = Math.floor(getFreightDice(freightRoll) / 2);
     const mailRoll = rollDice(2) + mailDM;
     const hasMail = mailRoll >= 12;
 
@@ -230,6 +264,6 @@ export function calculateTraffic(world) {
         passengers: passengers,
         freight_lots: freightLots,
         has_mail: hasMail,
-        logic: `Traffic roll was ${trafficRoll} (Pop ${popVal}). Mail roll was ${mailRoll}.`
+        logic: `Traffic rolls (H/M/B/L/F): ${highRoll}/${middleRoll}/${basicRoll}/${lowRoll}/${freightRoll}. Mail roll: ${mailRoll}.`
     };
 }
